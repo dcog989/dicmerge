@@ -1,22 +1,35 @@
 # AGENTS.md
 
-## Project: dicmerger
+## Project: dicmerge
 
 Python script to scan, merge, and optionally write back custom user dictionaries from multiple Linux applications.
 
 ### Tech Stack
 
-- Python 3.10+ (stdlib only: `pathlib`, `glob`, `re`, `argparse`, `shutil`, `logging`, `codecs`, `tempfile`)
-- PyYAML (only external dependency)
+| Tool | Version |
+|------|---------|
+| Python | 3.14 |
+| Package manager | uv |
+| Build backend | hatchling |
+| Linter + formatter | ruff |
+| Type checker | mypy |
+| Test framework | pytest |
+| Git hooks | lefthook |
+
+### Dependencies
+
+- **Runtime**: PyYAML, Rich
+- **Stdlib**: `pathlib`, `glob`, `re`, `argparse`, `shutil`, `logging`, `codecs`, `tempfile`
+- **Dev**: ruff, mypy, pytest
 
 ### Key Files
 
 | Path | Purpose |
 |------|---------|
-| `/usr/local/bin/dicmerger` | Main script |
-| `~/.config/dicmerger/config.yaml` | User configuration |
-| `~/.local/share/dicmerger/combined.txt` | Merged output |
-| `~/.local/share/dicmerger/debug.log` | Debug log |
+| `/usr/local/bin/dicmerge` | Main script |
+| `~/.config/dicmerge/config.yaml` | User configuration |
+| `~/.local/share/dicmerge/combined.txt` | Merged output |
+| `~/.local/share/dicmerge/debug.log` | Debug log |
 
 ### Core Behaviors
 
@@ -29,10 +42,10 @@ Python script to scan, merge, and optionally write back custom user dictionaries
 ### Command Line
 
 ```bash
-dicmerger                      # Run with defaults
-dicmerger --write-back         # Write new words back to sources
-dicmerger --dry-run            # Preview only
-dicmerger --list-sources       # Show discovered paths
+dicmerge                      # Run with defaults
+dicmerge --write-back         # Write new words back to sources
+dicmerge --dry-run            # Preview only
+dicmerge --list-sources       # Show discovered paths
 ```
 
 ### Exit Codes
@@ -50,7 +63,6 @@ dicmerger --list-sources       # Show discovered paths
 
 ### Constraints
 
-- No external deps beyond PyYAML
 - No binary dictionary support (skip `.rws`)
 - No concurrency handling (manual execution only)
 - Linux only, CachyOS/Arch paths assumed
