@@ -1,12 +1,13 @@
 from pathlib import Path
 
 from dicmerge.scanner.base import Scanner
+from dicmerge.util import read_text_with_fallback
 
 
 class FirefoxScanner(Scanner):
     def read(self, path: Path) -> list[str]:
         words: list[str] = []
-        for line in path.read_text(encoding="utf-8").splitlines():
+        for line in read_text_with_fallback(path).splitlines():
             word = line.strip()
             if word:
                 words.append(word)

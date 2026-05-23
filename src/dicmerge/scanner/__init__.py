@@ -4,6 +4,7 @@ from dicmerge.scanner.base import Scanner
 from dicmerge.scanner.firefox import FirefoxScanner
 from dicmerge.scanner.libreoffice import LibreOfficeScanner
 from dicmerge.scanner.plaintext import PlainTextScanner
+from dicmerge.util import read_text_with_fallback
 
 
 def _is_libreoffice(path: Path) -> bool:
@@ -13,7 +14,7 @@ def _is_libreoffice(path: Path) -> bool:
     if not path.exists():
         return True
     try:
-        first = path.read_text(encoding="utf-8").splitlines()[0].strip()
+        first = read_text_with_fallback(path).splitlines()[0].strip()
         return first == "OOoUserDict1"
     except IndexError, OSError:
         return False

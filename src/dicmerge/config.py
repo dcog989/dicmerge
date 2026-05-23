@@ -4,6 +4,7 @@ from typing import Any
 
 import yaml
 
+from dicmerge.exceptions import ConfigError
 from dicmerge.util import expand_paths
 
 DEFAULT_CONFIG_PATH = Path("~/.config/dicmerge/config.yaml").expanduser()
@@ -17,10 +18,14 @@ def load_config(path: Path | None = None) -> dict[str, Any]:
         _write_config(config_path, default)
         return default
 
-    raw = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    try:
+        raw = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    except yaml.YAMLError as e:
+        raise ConfigError(f"Failed to parse config: {e}") from e
+
     if not isinstance(raw, dict):
         msg = f"Config must be a mapping, got {type(raw).__name__}"
-        raise ValueError(msg)
+        raise ConfigError(msg)
 
     return _normalise(raw)
 

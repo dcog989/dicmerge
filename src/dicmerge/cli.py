@@ -1,12 +1,18 @@
 import argparse
+import sys
 from pathlib import Path
 
 from rich.console import Console
 from rich.table import Table
 
+from dicmerge import __version__
+from dicmerge.config import DEFAULT_CONFIG_PATH
 from dicmerge.core import run
+from dicmerge.exceptions import DicmergeError
 
 console = Console()
+
+_SHOW_CONFIG = object()
 
 
 def main() -> None:
@@ -25,23 +31,45 @@ def main() -> None:
         help="Preview only, no files written",
     )
     parser.add_argument(
-        "--config",
-        type=Path,
-        default=None,
-        help="Path to config file",
+        "--version",
+        action="version",
+        version=f"dicmerge {__version__}",
+        help="Show version",
     )
     parser.add_argument(
         "--list-sources",
         action="store_true",
-        help="Show discovered source files and exit",
+        help="Show discovered source files",
+    )
+    parser.add_argument(
+        "--config",
+        nargs="?",
+        type=Path,
+        const=_SHOW_CONFIG,
+        default=None,
+        metavar="CONFIG",
+        help="Set path to config file",
     )
 
     args = parser.parse_args()
 
+    if args.config is _SHOW_CONFIG:
+        console.print(f"Config path: {DEFAULT_CONFIG_PATH}")
+        return
+
+    if args.config is not None:
+        if not args.config.exists():
+            console.print(f"[red]Error:[/red] Config file not found: {args.config}")
+            sys.exit(1)
+
     if args.list_sources:
         from dicmerge.config import discover_source_files, load_config
 
-        config = load_config(args.config)
+        try:
+            config = load_config(args.config)
+        except DicmergeError as e:
+            console.print(f"[red]Error:[/red] {e}")
+            sys.exit(e.exit_code)
         discovered = discover_source_files(config)
         table = Table(title="Discovered Sources")
         table.add_column("Source", style="cyan")
@@ -57,11 +85,15 @@ def main() -> None:
     if args.dry_run:
         console.print("[yellow]Dry run mode — no files will be written[/yellow]")
 
-    result = run(
-        config_path=args.config,
-        write_back=args.write_back,
-        dry_run=args.dry_run,
-    )
+    try:
+        result = run(
+            config_path=args.config,
+            write_back=args.write_back,
+            dry_run=args.dry_run,
+        )
+    except DicmergeError as e:
+        console.print(f"[red]Error:[/red] {e}")
+        sys.exit(e.exit_code)
 
     console.print("\n[bold]Scanning:[/bold]")
     for name, count in sorted(result["source_stats"].items()):
@@ -78,7 +110,8 @@ def main() -> None:
 
     if result["write_back_stats"]:
         console.print("\n[bold]Write-back:[/bold]")
-        for name, count in sorted(result["write_back_stats"].items()):
-            console.print(f"  [green]✓[/green] {name}: +{count} words")
+        for name, entries in sorted(result["write_back_stats"].items()):
+            for filename, count in entries:
+                console.print(f"  [green]✓[/green] {name}: {filename} → +{count} words")
 
     console.print("\n[green]Done.[/green]")

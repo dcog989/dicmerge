@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from dicmerge.scanner.firefox import FirefoxScanner
+from dicmerge.scanner.libreoffice import LibreOfficeScanner
 from dicmerge.scanner.plaintext import PlainTextScanner
 
 
@@ -67,3 +68,72 @@ def test_firefox_append(tmp_path: Path):
     scanner = FirefoxScanner()
     scanner.append(f, ["bar", "baz"])
     assert f.read_text(encoding="utf-8") == "foo\nbar\nbaz\n"
+
+
+HEADER = "OOoUserDict1\nlang: en-US\ntype: positive\nreplacement: \n"
+
+
+def test_libreoffice_read_basic(tmp_path: Path):
+    f = tmp_path / "custom.dic"
+    f.write_text(HEADER + "foo\nbar\nbaz\n", encoding="utf-8")
+    scanner = LibreOfficeScanner()
+    assert scanner.read(f) == ["foo", "bar", "baz"]
+
+
+def test_libreoffice_read_skips_header(tmp_path: Path):
+    f = tmp_path / "custom.dic"
+    lines = "OOoUserDict1\nsome_header_word\ntype: positive\nreplacement: \nactual_word\n"
+    f.write_text(lines, encoding="utf-8")
+    scanner = LibreOfficeScanner()
+    assert scanner.read(f) == ["actual_word"]
+
+
+def test_libreoffice_read_less_than_4_lines(tmp_path: Path):
+    f = tmp_path / "custom.dic"
+    f.write_text("line1\nline2\n", encoding="utf-8")
+    scanner = LibreOfficeScanner()
+    assert scanner.read(f) == []
+
+
+def test_libreoffice_read_exactly_4_lines(tmp_path: Path):
+    f = tmp_path / "custom.dic"
+    f.write_text(HEADER, encoding="utf-8")
+    scanner = LibreOfficeScanner()
+    assert scanner.read(f) == []
+
+
+def test_libreoffice_read_empty_file(tmp_path: Path):
+    f = tmp_path / "custom.dic"
+    f.write_text("", encoding="utf-8")
+    scanner = LibreOfficeScanner()
+    assert scanner.read(f) == []
+
+
+def test_libreoffice_read_skips_empty_lines_after_header(tmp_path: Path):
+    f = tmp_path / "custom.dic"
+    f.write_text(HEADER + "foo\n\n\nbar\n", encoding="utf-8")
+    scanner = LibreOfficeScanner()
+    assert scanner.read(f) == ["foo", "bar"]
+
+
+def test_libreoffice_read_strips_whitespace(tmp_path: Path):
+    f = tmp_path / "custom.dic"
+    f.write_text(HEADER + "  foo  \n\tbar\t\n", encoding="utf-8")
+    scanner = LibreOfficeScanner()
+    assert scanner.read(f) == ["foo", "bar"]
+
+
+def test_libreoffice_append(tmp_path: Path):
+    f = tmp_path / "custom.dic"
+    f.write_text(HEADER + "foo\n", encoding="utf-8")
+    scanner = LibreOfficeScanner()
+    scanner.append(f, ["bar", "baz"])
+    assert f.read_text(encoding="utf-8") == HEADER + "foo\nbar\nbaz\n"
+
+
+def test_libreoffice_append_to_empty_file(tmp_path: Path):
+    f = tmp_path / "custom.dic"
+    f.write_text("", encoding="utf-8")
+    scanner = LibreOfficeScanner()
+    scanner.append(f, ["foo"])
+    assert f.read_text(encoding="utf-8") == "foo\n"
