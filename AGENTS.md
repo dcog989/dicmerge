@@ -33,8 +33,8 @@ Python script to scan, merge, and optionally write back custom user dictionaries
 
 ### Core Behaviors
 
-- Scan enabled sources from config (Firefox, Obsidian, Zed, LibreOffice, Kate, KDE)
-- Deduplicate case-insensitively, preserve all original case variants
+- Scan enabled sources from config (Firefox, Obsidian, Zed, LibreOffice, Kate, KDE, Thunderbird, VS Code, Vim, Gedit)
+- Deduplicate case-insensitively (first occurrence wins)
 - Output plain text, one word per line, UTF-8
 - Write-back appends missing words only, creates `.bak` backup first
 - Manual execution only, no daemon or scheduler
@@ -42,7 +42,7 @@ Python script to scan, merge, and optionally write back custom user dictionaries
 ### Command Line
 
 ```bash
-dicmerge                      # Run with defaults
+dicmerge                      # Write to combined.txt
 dicmerge --write-back         # Write new words back to sources
 dicmerge --dry-run            # Preview only
 dicmerge --list-sources       # Show discovered paths

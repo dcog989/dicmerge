@@ -1,3 +1,4 @@
+import glob
 from pathlib import Path
 from typing import Any
 
@@ -12,7 +13,9 @@ def load_config(path: Path | None = None) -> dict[str, Any]:
     config_path = path or DEFAULT_CONFIG_PATH
 
     if not config_path.exists():
-        return _default_config()
+        default = _default_config()
+        _write_config(config_path, default)
+        return default
 
     raw = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
@@ -25,7 +28,7 @@ def load_config(path: Path | None = None) -> dict[str, Any]:
 def _default_config() -> dict[str, Any]:
     return {
         "output": {
-            "path": "~/.local/share/dicmerge/combined.txt",
+            "path": "~/dicmerge-output/combined.txt",
             "create_hunspell_dic": True,
             "encoding": "utf-8",
             "sort": True,
@@ -35,6 +38,7 @@ def _default_config() -> dict[str, Any]:
                 "enabled": True,
                 "paths": [
                     "~/.mozilla/firefox/*/persdict.dat",
+                    "~/.config/mozilla/firefox/*/persdict.dat",
                     "~/.var/app/org.mozilla.firefox/.mozilla/firefox/*/persdict.dat",
                 ],
             },
@@ -43,6 +47,7 @@ def _default_config() -> dict[str, Any]:
                 "paths": [
                     "~/Documents/Obsidian/*/*.dic",
                     "~/.config/obsidian/custom-dict.txt",
+                    "~/.config/obsidian/Custom Dictionary.txt",
                 ],
                 "recursive": True,
             },
@@ -63,7 +68,26 @@ def _default_config() -> dict[str, Any]:
             },
             "kde_sonnet": {
                 "enabled": True,
-                "paths": ["~/.config/enchant/hunspell/*.dic"],
+                "paths": ["~/.hunspell_*"],
+            },
+            "thunderbird": {
+                "enabled": True,
+                "paths": ["~/.thunderbird/*/persdict.dat"],
+            },
+            "vscode": {
+                "enabled": True,
+                "paths": ["~/.config/Code/Dictionaries/*.txt"],
+            },
+            "vim": {
+                "enabled": True,
+                "paths": [
+                    "~/.vim/spell/*.add",
+                    "~/.config/nvim/spell/*.add",
+                ],
+            },
+            "gedit": {
+                "enabled": True,
+                "paths": ["~/.local/share/gedit/spellcheck/words"],
             },
         },
         "custom_sources": [
@@ -83,6 +107,11 @@ def _default_config() -> dict[str, Any]:
     }
 
 
+def _write_config(path: Path, config: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(yaml.dump(config, default_flow_style=False), encoding="utf-8")
+
+
 def _normalise(raw: dict[str, Any]) -> dict[str, Any]:
     config = _default_config()
 
@@ -100,6 +129,13 @@ def _normalise(raw: dict[str, Any]) -> dict[str, Any]:
     return config
 
 
+_BACKUP_MARKERS = {"-backup", "-back-ovfs"}
+
+
+def _is_backup(path: Path) -> bool:
+    return any(part.endswith(m) for part in path.parts for m in _BACKUP_MARKERS)
+
+
 def discover_source_files(config: dict[str, Any]) -> dict[str, list[Path]]:
     discovered: dict[str, list[Path]] = {}
 
@@ -109,19 +145,18 @@ def discover_source_files(config: dict[str, Any]) -> dict[str, list[Path]]:
         recursive = source.get("recursive", False)
         files: list[Path] = []
         for pattern in expand_paths(source["paths"]):
-            if recursive:
-                files.extend(sorted(pattern.rglob("*")))
-            else:
-                files.extend(sorted(pattern.glob("*")))
+            matches = glob.glob(str(pattern), recursive=recursive)
+            files.extend(sorted(Path(m) for m in matches if not _is_backup(Path(m))))
         discovered[name] = sorted(set(files))
 
     custom = config.get("custom_sources", [])
     for entry in custom:
         if not entry.get("enabled", False):
             continue
-        files = []
+        custom_files: list[Path] = []
         for pattern in expand_paths(entry["paths"]):
-            files.extend(sorted(Path(pattern).parent.glob(Path(pattern).name)))
-        discovered[entry["name"]] = sorted(set(files))
+            matches = glob.glob(str(pattern))
+            custom_files.extend(sorted(Path(m) for m in matches))
+        discovered[entry["name"]] = sorted(set(custom_files))
 
     return discovered

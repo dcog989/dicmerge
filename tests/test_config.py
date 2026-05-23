@@ -18,9 +18,11 @@ def test_default_config_sources():
     assert "kate" in cfg["sources"]
 
 
-def test_load_config_returns_defaults_when_missing():
-    cfg = load_config(Path("/nonexistent/config.yaml"))
-    assert cfg["output"]["path"] == "~/.local/share/dicmerge/combined.txt"
+def test_load_config_writes_defaults_when_missing(tmp_path: Path):
+    config_path = tmp_path / "dicmerge" / "config.yaml"
+    cfg = load_config(config_path)
+    assert cfg["output"]["path"] == "~/dicmerge-output/combined.txt"
+    assert config_path.exists()
 
 
 def test_normalise_merges_partial_config():

@@ -1,3 +1,48 @@
 # dicmerge
 
-This Python script will scan for custom user dictionaries from e.g. Firefox, Obsidian, Zed, Libreoffice, then output a merged version of the dictionaries. Optionally, you can then write the merged dictionary back to the original locations.
+Scan multiple applications for custom user dictionaries, merge them into a single wordlist, and optionally write new words back to each source.
+
+## Install
+
+```bash
+uv tool install git+https://github.com/dcog989/dicmerge
+# or locally
+uv sync
+```
+
+## Usage
+
+```bash
+dicmerge                        # Merge and write combined wordlist
+dicmerge --dry-run              # Preview only
+dicmerge --write-back           # Merge + append new words to each source
+dicmerge --list-sources         # Show discovered dictionary files
+dicmerge --config custom.yaml   # Use alternate config
+```
+
+On first run, `~/.config/dicmerge/config.yaml` is created automatically with default settings.
+
+## Sources
+
+| Source | Path(s) |
+|--------|---------|
+| Firefox | `~/.mozilla/firefox/*/persdict.dat`, `~/.config/mozilla/firefox/*/persdict.dat` |
+| Thunderbird | `~/.thunderbird/*/persdict.dat` |
+| Obsidian | `~/Documents/Obsidian/*/*.dic`, `~/.config/obsidian/custom-dict.txt`, `~/.config/obsidian/Custom Dictionary.txt` |
+| Zed | `~/.config/zed/dictionary.txt` |
+| LibreOffice | `~/.config/libreoffice/4/user/wordbook/*.dic` |
+| Kate | `~/.local/share/kate/dictionary.txt`, `~/.config/kate/spellcheck/*.txt` |
+| KDE Sonnet | `~/.hunspell_*` |
+| VS Code | `~/.config/Code/Dictionaries/*.txt` |
+| Vim/Neovim | `~/.vim/spell/*.add`, `~/.config/nvim/spell/*.add` |
+| Gedit | `~/.local/share/gedit/spellcheck/words` |
+
+Custom sources can be added in the config file under `custom_sources`.
+
+## Output
+
+Default: `~/dicmerge-output/combined.txt` (configurable in config).
+
+## Write-back
+
+`--write-back` appends words missing from each source to its dictionary file. Original files are backed up with a `.bak` suffix before modification.

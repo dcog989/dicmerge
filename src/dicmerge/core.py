@@ -1,4 +1,5 @@
 import re
+import shutil
 from pathlib import Path
 from typing import Any
 
@@ -60,7 +61,7 @@ def run(
                             path.suffix + config["write_back"]["backup_suffix"]
                         )
                         if not backup.exists():
-                            path.rename(backup)
+                            shutil.copy2(path, backup)
                     scanner.append(path, new)
                 total_new += len(new)
             if total_new:
