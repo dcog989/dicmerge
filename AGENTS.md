@@ -33,7 +33,7 @@ Python script to scan, merge, and optionally write back custom user dictionaries
 
 ### Core Behaviors
 
-- Scan enabled sources from config (Firefox, Obsidian, Zed, LibreOffice, Kate, KDE, Thunderbird, VS Code, Vim, Gedit)
+- Scan enabled sources from config (Firefox, Obsidian, LibreOffice, KDE Sonnet, Thunderbird, Vim, Gedit)
 - Deduplicate case-insensitively (first occurrence wins)
 - Output plain text, one word per line, UTF-8
 - Write-back appends missing words only, creates `.bak` backup first
@@ -55,7 +55,7 @@ dicmerge --list-sources       # Show discovered paths
 ### Development Priorities
 
 1. Core scanner + plain text handler
-2. Firefox, Zed, Kate
+2. Firefox, Obsidian, LibreOffice
 3. Obsidian, LibreOffice
 4. KDE Sonnet discovery
 5. Write-back with backup

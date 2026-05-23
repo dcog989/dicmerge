@@ -46,25 +46,13 @@ def _default_config() -> dict[str, Any]:
                 "enabled": True,
                 "paths": [
                     "~/Documents/Obsidian/*/*.dic",
-                    "~/.config/obsidian/custom-dict.txt",
                     "~/.config/obsidian/Custom Dictionary.txt",
                 ],
                 "recursive": True,
             },
-            "zed": {
-                "enabled": True,
-                "paths": ["~/.config/zed/dictionary.txt"],
-            },
             "libreoffice": {
                 "enabled": True,
                 "paths": ["~/.config/libreoffice/4/user/wordbook/*.dic"],
-            },
-            "kate": {
-                "enabled": True,
-                "paths": [
-                    "~/.local/share/kate/dictionary.txt",
-                    "~/.config/kate/spellcheck/*.txt",
-                ],
             },
             "kde_sonnet": {
                 "enabled": True,
@@ -73,10 +61,6 @@ def _default_config() -> dict[str, Any]:
             "thunderbird": {
                 "enabled": True,
                 "paths": ["~/.thunderbird/*/persdict.dat"],
-            },
-            "vscode": {
-                "enabled": True,
-                "paths": ["~/.config/Code/Dictionaries/*.txt"],
             },
             "vim": {
                 "enabled": True,

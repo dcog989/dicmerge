@@ -28,12 +28,9 @@ On first run, `~/.config/dicmerge/config.yaml` is created automatically with def
 |--------|---------|
 | Firefox | `~/.mozilla/firefox/*/persdict.dat`, `~/.config/mozilla/firefox/*/persdict.dat` |
 | Thunderbird | `~/.thunderbird/*/persdict.dat` |
-| Obsidian | `~/Documents/Obsidian/*/*.dic`, `~/.config/obsidian/custom-dict.txt`, `~/.config/obsidian/Custom Dictionary.txt` |
-| Zed | `~/.config/zed/dictionary.txt` |
+| Obsidian | `~/Documents/Obsidian/*/*.dic`, `~/.config/obsidian/Custom Dictionary.txt` |
 | LibreOffice | `~/.config/libreoffice/4/user/wordbook/*.dic` |
-| Kate | `~/.local/share/kate/dictionary.txt`, `~/.config/kate/spellcheck/*.txt` |
 | KDE Sonnet | `~/.hunspell_*` |
-| VS Code | `~/.config/Code/Dictionaries/*.txt` |
 | Vim/Neovim | `~/.vim/spell/*.add`, `~/.config/nvim/spell/*.add` |
 | Gedit | `~/.local/share/gedit/spellcheck/words` |
 

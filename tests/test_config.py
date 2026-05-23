@@ -14,8 +14,8 @@ def test_default_config_structure():
 def test_default_config_sources():
     cfg = _default_config()
     assert "firefox" in cfg["sources"]
-    assert "zed" in cfg["sources"]
-    assert "kate" in cfg["sources"]
+    assert "obsidian" in cfg["sources"]
+    assert "kde_sonnet" in cfg["sources"]
 
 
 def test_load_config_writes_defaults_when_missing(tmp_path: Path):
