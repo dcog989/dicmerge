@@ -12,10 +12,13 @@ uv sync
 ```
 
 ```bash
-uv run version                  # Bump minor version
-uv run version 1.0.0            # Set specific version
-uv run version major            # Bump major
-uv run version patch            # Bump patch
+uv run version-bump                  # Bump minor version
+
+uv run version-bump 1.0.0            # Set specific version
+
+uv run version-bump major            # Bump major
+
+uv run version-bump patch            # Bump patch
 ```
 
 ## Usage
