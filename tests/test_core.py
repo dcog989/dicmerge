@@ -61,7 +61,6 @@ def _make_config(tmp_path: Path) -> tuple[Path, Path, Path]:
         "output": {
             "path": str(out / "combined.txt"),
             "sort": False,
-            "create_hunspell_dic": False,
             "encoding": "utf-8",
         },
         "sources": {
@@ -249,17 +248,33 @@ def test_run_write_back_creates_backup(tmp_path: Path):
     assert (firefox_dir / "persdict.dat.bak").read_text(encoding="utf-8") == "foo\n"
 
 
-def test_run_create_hunspell_dic(tmp_path: Path):
+def test_run_writes_discovered_formats(tmp_path: Path):
     config_path, src, out = _make_config(tmp_path)
-    d = src / "firefox" / "default"
-    d.mkdir(parents=True)
-    (d / "persdict.dat").write_text("foo\nbar\n", encoding="utf-8")
+
+    firefox_dir = src / "firefox" / "default"
+    firefox_dir.mkdir(parents=True)
+    (firefox_dir / "persdict.dat").write_text("foo\nbar\n", encoding="utf-8")
 
     cfg = yaml.safe_load(config_path.read_text(encoding="utf-8"))
-    cfg["output"]["create_hunspell_dic"] = True
+    cfg["sources"]["libreoffice"] = {
+        "enabled": True,
+        "paths": [str(src / "libreoffice/*.dic")],
+    }
     config_path.write_text(yaml.dump(cfg), encoding="utf-8")
+
+    lo_dir = src / "libreoffice"
+    lo_dir.mkdir(parents=True)
+    (lo_dir / "custom.dic").write_text(
+        "OOoUserDict1\nlang: en-US\ntype: positive\nreplacement: \nbaz\n",
+        encoding="utf-8",
+    )
 
     run(config_path=config_path)
 
+    assert (out / "combined.txt").read_text(encoding="utf-8") == "foo\nbar\nbaz\n"
+    assert (out / "combined.dat").exists()
+    assert (out / "combined.dat").read_text(encoding="utf-8") == "foo\nbar\nbaz\n"
     assert (out / "combined.dic").exists()
-    assert (out / "combined.dic").read_text(encoding="utf-8") == "foo\nbar\n"
+    assert (out / "combined.dic").read_text(encoding="utf-8") == (
+        "OOoUserDict1\nlang: en-US\ntype: positive\nreplacement: \nfoo\nbar\nbaz\n"
+    )

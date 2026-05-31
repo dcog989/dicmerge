@@ -9,6 +9,8 @@ from dicmerge.exceptions import NoSourcesError, OutputError, WriteBackError
 from dicmerge.log import get_logger
 from dicmerge.output import write_words
 from dicmerge.scanner import get_scanner
+from dicmerge.scanner.base import Scanner
+from dicmerge.scanner.plaintext import PlainTextScanner
 
 
 def run(
@@ -26,20 +28,23 @@ def run(
 
     stats: dict[str, int] = {}
     all_words: list[str] = []
+    per_file_words: dict[Path, list[str]] = {}
+    used_scanner_types: set[type[Scanner]] = set()
 
     for name, files in discovered.items():
         total = 0
         for path in files:
             if path.suffix == ".rws":
-                print(f"  ⚠ {name}: {path.name}: skipping binary format (.rws)")
+                get_logger().warning("%s: %s: skipping binary format (.rws)", name, path.name)
                 continue
             scanner = get_scanner(path)
+            used_scanner_types.add(type(scanner))
             try:
                 words = scanner.read(path)
+                per_file_words[path] = words
                 all_words.extend(words)
                 total += len(words)
             except Exception as e:
-                print(f"  ⚠ {name}: {path.name}: {e}")
                 get_logger().warning("Failed to scan %s: %s", path, e)
         stats[name] = total
 
@@ -54,9 +59,16 @@ def run(
     if not dry_run:
         try:
             write_words(output_path, unique)
-            if config["output"].get("create_hunspell_dic", False):
-                dic_path = output_path.with_suffix(".dic")
-                shutil.copy2(output_path, dic_path)
+            written_extensions = {output_path.suffix}
+            for scanner_cls in used_scanner_types:
+                if scanner_cls is PlainTextScanner:
+                    continue
+                ext = scanner_cls.extension
+                if ext in written_extensions:
+                    continue
+                written_extensions.add(ext)
+                fmt_path = output_path.with_suffix(ext)
+                fmt_path.write_text(scanner_cls.format_output(unique), encoding="utf-8")
         except (OSError, PermissionError) as e:
             raise OutputError(f"Cannot write output to {output_path}: {e}") from e
 
@@ -65,12 +77,22 @@ def run(
     if write_back:
         for name, files in discovered.items():
             for path in files:
-                scanner = get_scanner(path)
-                existing = scanner.read(path)
+                if path.suffix == ".rws":
+                    get_logger().warning(
+                        "%s: %s: skipping write-back for binary format (.rws)",
+                        name,
+                        path.name,
+                    )
+                    continue
+                existing = per_file_words.get(path)
+                if existing is None:
+                    scanner = get_scanner(path)
+                    existing = scanner.read(path)
                 new = missing_words(unique, existing)
                 if not new:
                     continue
                 if not dry_run:
+                    scanner = get_scanner(path)
                     if config["write_back"]["create_backup"]:
                         backup = path.with_suffix(
                             path.suffix + config["write_back"]["backup_suffix"]

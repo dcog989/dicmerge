@@ -23,7 +23,7 @@ Linux CachyOS, Limine boot loader, KDE Plasma 6, Wayland, Btrfs. Firefox, Kate t
 ### Dependencies
 
 - **Runtime**: PyYAML, Rich
-- **Stdlib**: `pathlib`, `glob`, `re`, `argparse`, `shutil`, `logging`, `codecs`, `tempfile`
+- **Stdlib**: `pathlib`, `glob`, `re`, `argparse`, `shutil`, `logging`, `tempfile`
 - **Dev**: ruff, mypy, pytest
 
 ### Key Files
@@ -32,7 +32,7 @@ Linux CachyOS, Limine boot loader, KDE Plasma 6, Wayland, Btrfs. Firefox, Kate t
 |------|---------|
 | `/usr/local/bin/dicmerge` | Main script |
 | `~/.config/dicmerge/config.yaml` | User configuration |
-| `~/.local/share/dicmerge/combined.txt` | Merged output |
+| `~/dicmerge-output/combined.txt` | Merged output |
 | `~/.local/share/dicmerge/debug.log` | Debug log |
 
 ### Core Behaviors
@@ -54,7 +54,7 @@ dicmerge --list-sources       # Show discovered paths
 
 ### Exit Codes
 
-0=Success, 1=Generic error, 2=Config error, 3=No sources, 4=Permission denied, 5=Output unwritable
+0=Success, 1=Generic error, 2=Config error, 3=No sources, 4=Write-back failed, 5=Output unwritable
 
 ### Development Priorities
 

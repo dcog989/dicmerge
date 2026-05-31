@@ -5,6 +5,12 @@ from dicmerge.util import read_text_with_fallback
 
 
 class PlainTextScanner(Scanner):
+    extension = ".txt"
+
+    @staticmethod
+    def format_output(words: list[str]) -> str:
+        return "\n".join(words) + "\n"
+
     def read(self, path: Path) -> list[str]:
         words: list[str] = []
         for lineno, line in enumerate(read_text_with_fallback(path).splitlines(), 1):

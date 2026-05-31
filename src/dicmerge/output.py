@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
@@ -17,7 +18,7 @@ def write_words(path: Path, words: list[str]) -> None:
         tmp.flush()
         tmp.close()
         tmp_path = Path(tmp.name)
-        tmp_path.replace(path)
-    except BaseException:
+        shutil.move(tmp_path, path)
+    except Exception:
         Path(tmp.name).unlink(missing_ok=True)
         raise

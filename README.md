@@ -21,6 +21,13 @@ dicmerge --list-sources         # Show discovered dictionary files
 dicmerge --config custom.yaml   # Use alternate config
 ```
 
+```bash
+uv run version                  # Bump minor version
+uv run version 1.0.0            # Set specific version
+uv run version major            # Bump major
+uv run version patch            # Bump patch
+```
+
 On first run, `~/.config/dicmerge/config.yaml` is created automatically with default settings.
 
 ## Sources

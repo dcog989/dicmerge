@@ -3,8 +3,16 @@ from pathlib import Path
 from dicmerge.scanner.base import Scanner
 from dicmerge.util import read_text_with_fallback
 
+_LO_HEADER = "OOoUserDict1\nlang: en-US\ntype: positive\nreplacement: \n"
+
 
 class LibreOfficeScanner(Scanner):
+    extension = ".dic"
+
+    @staticmethod
+    def format_output(words: list[str]) -> str:
+        return _LO_HEADER + "\n".join(words) + "\n"
+
     def read(self, path: Path) -> list[str]:
         lines = read_text_with_fallback(path).splitlines()
         words: list[str] = []

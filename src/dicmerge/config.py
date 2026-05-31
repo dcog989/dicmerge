@@ -34,7 +34,6 @@ def _default_config() -> dict[str, Any]:
     return {
         "output": {
             "path": "~/dicmerge-output/combined.txt",
-            "create_hunspell_dic": True,
             "encoding": "utf-8",
             "sort": True,
         },
@@ -107,7 +106,11 @@ def _normalise(raw: dict[str, Any]) -> dict[str, Any]:
     if "output" in raw:
         config["output"].update(raw["output"])
     if "sources" in raw:
-        config["sources"].update(raw["sources"])
+        for name, src_cfg in raw["sources"].items():
+            if name in config["sources"]:
+                config["sources"][name].update(src_cfg)
+            else:
+                config["sources"][name] = src_cfg
     if "custom_sources" in raw:
         config["custom_sources"] = raw["custom_sources"]
     if "write_back" in raw:
