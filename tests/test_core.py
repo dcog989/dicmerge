@@ -183,7 +183,7 @@ def test_run_no_sources_raises_error(tmp_path: Path):
         run(config_path=config_path)
 
 
-def test_run_write_back_appends_new_words(tmp_path: Path):
+def test_run_write_back_overwrites_files(tmp_path: Path):
     config_path, src, out = _make_config(tmp_path)
 
     firefox_dir = src / "firefox" / "default"
@@ -209,11 +209,11 @@ def test_run_write_back_appends_new_words(tmp_path: Path):
 
     result = run(config_path=config_path, write_back=True)
 
-    assert result["write_back_stats"]["firefox"] == [("persdict.dat", 2)]
-    assert result["write_back_stats"]["libreoffice"] == [("custom.dic", 1)]
+    assert result["write_back_stats"]["firefox"] == [("persdict.dat", 3)]
+    assert result["write_back_stats"]["libreoffice"] == [("custom.dic", 3)]
     assert ff_file.read_text(encoding="utf-8") == "foo\nbar\nbaz\n"
     assert lo_file.read_text(encoding="utf-8") == (
-        "OOoUserDict1\nlang: en-US\ntype: positive\nreplacement: \nbar\nbaz\nfoo\n"
+        "OOoUserDict1\nlang: en-US\ntype: positive\nreplacement: \nfoo\nbar\nbaz\n"
     )
 
 

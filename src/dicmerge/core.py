@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from dicmerge.config import discover_source_files, load_config
-from dicmerge.dedup import deduplicate, missing_words
+from dicmerge.dedup import deduplicate
 from dicmerge.exceptions import NoSourcesError, OutputError, WriteBackError
 from dicmerge.log import get_logger
 from dicmerge.output import write_words
@@ -28,7 +28,6 @@ def run(
 
     stats: dict[str, int] = {}
     all_words: list[str] = []
-    per_file_words: dict[Path, list[str]] = {}
     used_scanner_types: set[type[Scanner]] = set()
 
     for name, files in discovered.items():
@@ -41,7 +40,6 @@ def run(
             used_scanner_types.add(type(scanner))
             try:
                 words = scanner.read(path)
-                per_file_words[path] = words
                 all_words.extend(words)
                 total += len(words)
             except Exception as e:
@@ -84,18 +82,7 @@ def run(
                         path.name,
                     )
                     continue
-                existing = per_file_words.get(path)
-                if existing is None:
-                    try:
-                        existing = get_scanner(path).read(path)
-                    except Exception as e:
-                        get_logger().warning("Failed to re-read %s for write-back: %s", path, e)
-                        continue
-                new = missing_words(unique, existing)
-                if not new:
-                    continue
                 if not dry_run:
-                    scanner = get_scanner(path)
                     if config["write_back"]["create_backup"]:
                         backup = path.with_suffix(
                             path.suffix + config["write_back"]["backup_suffix"]
@@ -103,10 +90,12 @@ def run(
                         if not backup.exists():
                             shutil.copy2(path, backup)
                     try:
-                        scanner.append(path, new)
+                        scanner = get_scanner(path)
+                        content = type(scanner).format_output(unique)
+                        path.write_text(content, encoding="utf-8")
                     except (OSError, PermissionError) as e:
                         raise WriteBackError(f"Cannot write back to {path}: {e}") from e
-                write_back_stats.setdefault(name, []).append((path.name, len(new)))
+                write_back_stats.setdefault(name, []).append((path.name, len(unique)))
 
     return {
         "source_stats": stats,

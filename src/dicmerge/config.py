@@ -1,4 +1,5 @@
 import glob
+import os
 from pathlib import Path
 from typing import Any
 
@@ -28,6 +29,13 @@ def load_config(path: Path | None = None) -> dict[str, Any]:
         raise ConfigError(msg)
 
     return _normalise(raw)
+
+
+def _kde_sonnet_paths() -> list[str]:
+    lang = os.environ.get("LANG", "").split(".")[0]
+    if lang and lang not in ("C", "POSIX", ""):
+        return [f"~/.hunspell_{lang}"]
+    return ["~/.hunspell_*"]
 
 
 def _default_config() -> dict[str, Any]:
@@ -60,7 +68,7 @@ def _default_config() -> dict[str, Any]:
             },
             "kde_sonnet": {
                 "enabled": True,
-                "paths": ["~/.hunspell_*"],
+                "paths": _kde_sonnet_paths(),
             },
             "thunderbird": {
                 "enabled": True,
@@ -111,6 +119,10 @@ def _normalise(raw: dict[str, Any]) -> dict[str, Any]:
                 config["sources"][name].update(src_cfg)
             else:
                 config["sources"][name] = src_cfg
+        if "kde_sonnet" in raw["sources"]:
+            raw_paths = raw["sources"]["kde_sonnet"].get("paths")
+            if raw_paths == ["~/.hunspell_*"]:
+                config["sources"]["kde_sonnet"]["paths"] = _kde_sonnet_paths()
     if "custom_sources" in raw:
         config["custom_sources"] = raw["custom_sources"]
     if "write_back" in raw:
@@ -125,7 +137,11 @@ _BACKUP_MARKERS = {"-backup", "-back-ovfs"}
 
 
 def _is_backup(path: Path) -> bool:
-    return any(part.endswith(m) for part in path.parts for m in _BACKUP_MARKERS)
+    if any(part.endswith(m) for part in path.parts for m in _BACKUP_MARKERS):
+        return True
+    if path.suffix == ".bak":
+        return True
+    return False
 
 
 def discover_source_files(config: dict[str, Any]) -> dict[str, list[Path]]:

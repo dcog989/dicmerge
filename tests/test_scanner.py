@@ -40,14 +40,6 @@ def test_plaintext_read_keeps_non_digit_first_line(tmp_path: Path):
     assert scanner.read(f) == ["foo", "bar", "baz"]
 
 
-def test_plaintext_append(tmp_path: Path):
-    f = tmp_path / "dict.txt"
-    f.write_text("foo\n", encoding="utf-8")
-    scanner = PlainTextScanner()
-    scanner.append(f, ["bar", "baz"])
-    assert f.read_text(encoding="utf-8") == "foo\nbar\nbaz\n"
-
-
 def test_firefox_read(tmp_path: Path):
     f = tmp_path / "persdict.dat"
     f.write_text("foo\nbar\nbaz\n", encoding="utf-8")
@@ -60,14 +52,6 @@ def test_firefox_does_not_skip_digit_line(tmp_path: Path):
     f.write_text("12345\nfoo\n", encoding="utf-8")
     scanner = FirefoxScanner()
     assert scanner.read(f) == ["12345", "foo"]
-
-
-def test_firefox_append(tmp_path: Path):
-    f = tmp_path / "persdict.dat"
-    f.write_text("foo\n", encoding="utf-8")
-    scanner = FirefoxScanner()
-    scanner.append(f, ["bar", "baz"])
-    assert f.read_text(encoding="utf-8") == "foo\nbar\nbaz\n"
 
 
 HEADER = "OOoUserDict1\nlang: en-US\ntype: positive\nreplacement: \n"
@@ -121,19 +105,3 @@ def test_libreoffice_read_strips_whitespace(tmp_path: Path):
     f.write_text(HEADER + "  foo  \n\tbar\t\n", encoding="utf-8")
     scanner = LibreOfficeScanner()
     assert scanner.read(f) == ["foo", "bar"]
-
-
-def test_libreoffice_append(tmp_path: Path):
-    f = tmp_path / "custom.dic"
-    f.write_text(HEADER + "foo\n", encoding="utf-8")
-    scanner = LibreOfficeScanner()
-    scanner.append(f, ["bar", "baz"])
-    assert f.read_text(encoding="utf-8") == HEADER + "foo\nbar\nbaz\n"
-
-
-def test_libreoffice_append_to_empty_file(tmp_path: Path):
-    f = tmp_path / "custom.dic"
-    f.write_text("", encoding="utf-8")
-    scanner = LibreOfficeScanner()
-    scanner.append(f, ["foo"])
-    assert f.read_text(encoding="utf-8") == "foo\n"
