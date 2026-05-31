@@ -11,7 +11,7 @@ dependencies = [
 
 [project.scripts]
 dicmerge = "dicmerge.cli:main"
-version = "dicmerge._version:main"
+dicmerge-version = "dicmerge._version:main"
 
 [build-system]
 requires = ["hatchling"]
