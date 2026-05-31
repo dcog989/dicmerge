@@ -4,6 +4,10 @@
 
 Python script to scan, merge, and optionally write back custom user dictionaries from multiple Linux applications.
 
+## Dev Environment
+
+Linux CachyOS, Limine boot loader, KDE Plasma 6, Wayland, Btrfs. Firefox, Kate text editor, Zed code editor, fish shell with Ghostty + Fresh editor. paru and bun package managers. All software is updated as of today.
+
 ### Tech Stack
 
 | Tool | Version |
