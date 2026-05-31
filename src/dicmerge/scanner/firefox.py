@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from dicmerge.scanner.base import Scanner
-from dicmerge.util import read_text_with_fallback
+from dicmerge.util import ensure_trailing_newline, read_text_with_fallback
 
 
 class FirefoxScanner(Scanner):
@@ -20,6 +20,7 @@ class FirefoxScanner(Scanner):
         return words
 
     def append(self, path: Path, words: list[str]) -> None:
+        ensure_trailing_newline(path)
         with path.open("a", encoding="utf-8") as f:
             for word in words:
                 f.write(f"{word}\n")

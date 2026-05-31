@@ -86,8 +86,11 @@ def run(
                     continue
                 existing = per_file_words.get(path)
                 if existing is None:
-                    scanner = get_scanner(path)
-                    existing = scanner.read(path)
+                    try:
+                        existing = get_scanner(path).read(path)
+                    except Exception as e:
+                        get_logger().warning("Failed to re-read %s for write-back: %s", path, e)
+                        continue
                 new = missing_words(unique, existing)
                 if not new:
                     continue
