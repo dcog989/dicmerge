@@ -5,6 +5,10 @@
 .repomix/
 .repomixignore
 
+# dicmerge
+*.bak
+.lefthook/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
