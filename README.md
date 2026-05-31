@@ -5,6 +5,7 @@ Scan multiple applications for custom user dictionaries, merge them into a singl
 ## Install
 
 ```bash
+uv pip list --outdated
 uv tool install git+https://github.com/dcog989/dicmerge
 # or locally
 uv sync
