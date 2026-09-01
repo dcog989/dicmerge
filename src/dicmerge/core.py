@@ -53,10 +53,11 @@ def run(
         unique = sorted(unique, key=str.casefold)
 
     output_path = Path(config["output"]["path"]).expanduser()
+    encoding = config["output"]["encoding"]
 
     if not dry_run:
         try:
-            write_words(output_path, unique)
+            write_words(output_path, unique, encoding=encoding)
             written_extensions = {output_path.suffix}
             for scanner_cls in used_scanner_types:
                 if scanner_cls is PlainTextScanner:
@@ -66,7 +67,7 @@ def run(
                     continue
                 written_extensions.add(ext)
                 fmt_path = output_path.with_suffix(ext)
-                fmt_path.write_text(scanner_cls.format_output(unique), encoding="utf-8")
+                fmt_path.write_text(scanner_cls.format_output(unique), encoding=encoding)
         except (OSError, PermissionError) as e:
             raise OutputError(f"Cannot write output to {output_path}: {e}") from e
 
@@ -89,7 +90,7 @@ def run(
                     try:
                         scanner = get_scanner(path)
                         content = type(scanner).format_output(unique)
-                        path.write_text(content, encoding="utf-8")
+                        path.write_text(content, encoding=encoding)
                     except (OSError, PermissionError) as e:
                         raise WriteBackError(f"Cannot write back to {path}: {e}") from e
                     write_back_stats.setdefault(name, []).append((path.name, len(unique)))
