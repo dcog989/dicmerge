@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [v0.6.0](https://github.com/dcog989/dicmerge/compare/c078cbce5fb91e3494273bfbfe9060313576650e..v0.6.0) - 2026-09-01
+#### Build system
+- push commits and tag after cog bump - ([c078cbc](https://github.com/dcog989/dicmerge/commit/c078cbce5fb91e3494273bfbfe9060313576650e)) - dcog989
+#### Miscellaneous Chores
+- update - ([df55411](https://github.com/dcog989/dicmerge/commit/df5541137caf065cea369c5f59caa69f39a0b9ea)) - dcog989
+
+- - -
+
 ## [v0.5.1](https://github.com/dcog989/dicmerge/compare/e2835378adaee1a29fef1726995af29f7b372e40..v0.5.1) - 2026-09-01
 #### Bug Fixes
 - wrap backup creation in write-back error handling - ([b48a66e](https://github.com/dcog989/dicmerge/commit/b48a66ed70fea89139163d483356393bd93cd7c1)) - dcog989
