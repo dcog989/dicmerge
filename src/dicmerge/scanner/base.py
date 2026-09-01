@@ -8,6 +8,10 @@ class Scanner(ABC):
     extension: str = ""
     skip_header: int = 0
 
+    @classmethod
+    @abstractmethod
+    def matches(cls, path: Path) -> bool: ...
+
     def read(self, path: Path) -> list[str]:
         words: list[str] = []
         for lineno, line in enumerate(read_text_with_fallback(path).splitlines(), 1):
