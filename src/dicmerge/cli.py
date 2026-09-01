@@ -61,7 +61,8 @@ def main() -> None:
         raise ConfigError(f"Config file not found: {args.config}")
 
     if args.list_sources:
-        from dicmerge.config import discover_source_files, load_config
+        from dicmerge.config import load_config
+        from dicmerge.scanner.discovery import discover_source_files
 
         try:
             config = load_config(args.config)

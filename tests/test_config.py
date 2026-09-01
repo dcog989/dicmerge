@@ -1,6 +1,7 @@
 from pathlib import Path
 
-from dicmerge.config import _default_config, _normalise, discover_source_files, load_config
+from dicmerge.config import _default_config, _normalise, load_config
+from dicmerge.scanner.discovery import discover_source_files
 
 
 def test_default_config_structure():

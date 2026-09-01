@@ -3,12 +3,13 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from dicmerge.config import discover_source_files, load_config
+from dicmerge.config import load_config
 from dicmerge.dedup import deduplicate
 from dicmerge.exceptions import NoSourcesError, OutputError, WriteBackError
 from dicmerge.log import get_logger
 from dicmerge.output import write_words
 from dicmerge.scanner import get_scanner
+from dicmerge.scanner.discovery import discover_source_files
 
 
 def run(
