@@ -73,6 +73,22 @@ def test_discover_source_files_skips_backup_paths(tmp_path: Path):
     assert result.get("firefox", []) == []
 
 
+def test_discover_source_files_skips_crashrecovery_backup_paths(tmp_path: Path):
+    (tmp_path / "05thsp3s.default-backup-crashrecovery-20260707_132225").mkdir(parents=True)
+    (tmp_path / "05thsp3s.default-backup-crashrecovery-20260707_132225" / "persdict.dat").write_text(
+        "foo\n", encoding="utf-8"
+    )
+    (tmp_path / "05thsp3s.default" / "persdict.dat").parent.mkdir(parents=True)
+    (tmp_path / "05thsp3s.default" / "persdict.dat").write_text("bar\n", encoding="utf-8")
+
+    cfg = _default_config()
+    cfg["sources"]["firefox"]["paths"] = [str(tmp_path / "*/persdict.dat")]
+
+    result = discover_source_files(cfg)
+    assert [p.name for p in result["firefox"]] == ["persdict.dat"]
+    assert len(result["firefox"]) == 1
+
+
 def test_discover_source_files_custom_sources(tmp_path: Path):
     (tmp_path / "my_words.txt").write_text("foo\n", encoding="utf-8")
 

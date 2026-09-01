@@ -10,6 +10,8 @@ _BACKUP_MARKERS = {"-backup", "-back-ovfs"}
 def _is_backup(path: Path) -> bool:
     if any(part.endswith(m) for part in path.parts for m in _BACKUP_MARKERS):
         return True
+    if any("backup" in part.casefold() for part in path.parts):
+        return True
     return path.suffix == ".bak"
 
 
