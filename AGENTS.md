@@ -6,7 +6,7 @@ Python script to scan, merge, and optionally write back custom user dictionaries
 
 ## Dev Environment
 
-Linux CachyOS, Limine boot loader, KDE Plasma 6, Wayland, Btrfs. Firefox, Kate text editor, Zed code editor, fish shell with Ghostty + Fresh editor. paru and bun package managers. All software is updated as of today.
+Linux CachyOS / KDE Plasma 6 + Firefox, Zed code editor, fish shell with Ghostty + Fresh editor. yay and bun package managers.
 
 ### Tech Stack
 
@@ -45,7 +45,7 @@ Linux CachyOS, Limine boot loader, KDE Plasma 6, Wayland, Btrfs. Firefox, Kate t
 
 ### Command Line
 
-```bash
+```sh
 dicmerge                      # Write to combined.txt
 dicmerge --write-back         # Write new words back to sources
 dicmerge --dry-run            # Preview only
@@ -71,24 +71,52 @@ dicmerge --list-sources       # Show discovered paths
 - No concurrency handling (manual execution only)
 - Linux only, CachyOS/Arch paths assumed
 
-### Coding Principles
-
-- Use current coding standards and patterns (Svelte 5 runes, modern TS)
-- KISS, Occam's razor, DRY, YAGNI
-- Optimize for actual and perceived performance
-- Self-documenting code via clear naming
-- Comments only for workarounds/complex logic - do NOT add comments as running dev commentary.
-- No magic numbers
-- Split files of 400+ lines in to separate distinct functions
-- **Do NOT create docs files** (summary, reference, testing, etc.) unless explicitly requested
-
 ### File System Access
 
-#### Allowed Directories
+- Allowed: `/home/bubba/Projects/dicmerge/`
+- Disallowed:
 
-- `/home/bubba/Projects/dicmerge/`
+---
 
-#### Disallowed
+## General Guidelines
 
-- `.context/`, `.assets/`, `node_modules/`, `.repomix/`
-- `repomix.config.json`, `bun.lock`, `.repomixignore`
+### Code Changes
+
+- For non-trivial work, propose an approach and confirm before implementing.
+- Keep modifications minimal and scoped; prefer incremental improvements over rewrites. Ask before architectural changes.
+- Use explicit types and named constants (no magic numbers).
+- Return explicit error types; do not suppress exceptions.
+- Follow standard repository linting and formatting configs.
+- Decompose files over 400 lines if they mix concerns.
+- Use clear naming over comments; reserve comments for complex workarounds or non-obvious issues — why, not what.
+- Never run git mutations (commit, push, reset, rebase, amend) unless explicitly instructed.
+- Do not create documentation files unless explicitly requested.
+
+### Verification
+
+- Do not run test, lint, format, or type-check commands; the user builds, tests, and lints manually.
+- Run them only when the user explicitly asks.
+
+### Author Environment
+
+- CachyOS, KDE Plasma 6, Wayland, Btrfs.
+- fish shell, Ghostty terminal, Fresh TUI editor, yay package manager, bun npm manager, Firefox, and Zed code editor.
+
+### Testing
+
+- Do not create test files for trivial changes, or for behavior that is not reliably unit-testable in the test environment (e.g. UI layout/click mapping). Prefer no new files; only add a test when the logic is genuinely testable and worth guarding.
+
+### Definition of Done
+
+- Logic fully implemented.
+- Existing docs updated if public interfaces changed.
+- When required by the `Verification` rules, run the corresponding `Workflow` command.
+- On completion of an update or fix, print a concise conventional commit message in a fenced code block.
+
+### Communication Style
+
+- Provide concise, actionable responses.
+- Ask clarifying questions when requirements are ambiguous.
+- Flag potential risks or edge cases proactively.
+- Do not pretend to understand how the user feels.
+- Never editorialise your answer. No "to be honest", "honestly", hedging, disclaimers, or meta-commentary — just answer.

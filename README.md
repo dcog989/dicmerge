@@ -4,26 +4,26 @@ Scan multiple applications for custom user dictionaries, merge them into a singl
 
 ## Install
 
-```bash
-uv pip list --outdated
+```sh
+uv pip list --outdated                       # check outdated
+uv tree --outdated                           # check outdated in tree
+uv sync --upgrade                            # bump all deps
+uv lock --upgrade-package <name> && uv sync  # bump one package
+
 uv tool install git+https://github.com/dcog989/dicmerge
-# or locally
 uv sync
 ```
 
-```bash
+```sh
 uv run version-bump                  # Bump minor version
-
 uv run version-bump 1.0.0            # Set specific version
-
 uv run version-bump major            # Bump major
-
 uv run version-bump patch            # Bump patch
 ```
 
 ## Usage
 
-```bash
+```sh
 dicmerge                        # Merge and write combined wordlist
 dicmerge --dry-run              # Preview only
 dicmerge --write-back           # Merge + append new words to each source
@@ -35,15 +35,15 @@ On first run, `~/.config/dicmerge/config.yaml` is created automatically with def
 
 ## Sources
 
-| Source | Path(s) |
-|--------|---------|
-| Firefox | `~/.mozilla/firefox/*/persdict.dat`, `~/.config/mozilla/firefox/*/persdict.dat` |
-| Thunderbird | `~/.thunderbird/*/persdict.dat` |
-| Obsidian | `~/Documents/Obsidian/*/*.dic`, `~/.config/obsidian/Custom Dictionary.txt` |
-| LibreOffice | `~/.config/libreoffice/4/user/wordbook/*.dic` |
-| KDE Sonnet | `~/.hunspell_*` |
-| Vim/Neovim | `~/.vim/spell/*.add`, `~/.config/nvim/spell/*.add` |
-| Gedit | `~/.local/share/gedit/spellcheck/words` |
+| Source         | Path(s) |
+|----------------|---------|
+| Firefox        | `~/.mozilla/firefox/*/persdict.dat`, `~/.config/mozilla/firefox/*/persdict.dat` |
+| Thunderbird    | `~/.thunderbird/*/persdict.dat` |
+| Obsidian       | `~/Documents/Obsidian/*/*.dic`, `~/.config/obsidian/Custom Dictionary.txt` |
+| LibreOffice    | `~/.config/libreoffice/4/user/wordbook/*.dic` |
+| KDE Sonnet     | `~/.hunspell_*` |
+| Vim/Neovim     | `~/.vim/spell/*.add`, `~/.config/nvim/spell/*.add` |
+| Gedit          | `~/.local/share/gedit/spellcheck/words` |
 
 Custom sources can be added in the config file under `custom_sources`.
 
