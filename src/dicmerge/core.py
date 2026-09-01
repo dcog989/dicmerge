@@ -9,8 +9,6 @@ from dicmerge.exceptions import NoSourcesError, OutputError, WriteBackError
 from dicmerge.log import get_logger
 from dicmerge.output import write_words
 from dicmerge.scanner import get_scanner
-from dicmerge.scanner.base import Scanner
-from dicmerge.scanner.plaintext import PlainTextScanner
 
 
 def run(
@@ -28,7 +26,6 @@ def run(
 
     stats: dict[str, int] = {}
     all_words: list[str] = []
-    used_scanner_types: set[type[Scanner]] = set()
 
     for name, files in discovered.items():
         total = 0
@@ -36,7 +33,6 @@ def run(
             if _should_skip_rws(name, path):
                 continue
             scanner = get_scanner(path)
-            used_scanner_types.add(type(scanner))
             try:
                 words = scanner.read(path)
                 all_words.extend(words)
@@ -57,16 +53,6 @@ def run(
     if not dry_run:
         try:
             write_words(output_path, unique, encoding=encoding)
-            written_extensions = {output_path.suffix}
-            for scanner_cls in used_scanner_types:
-                if scanner_cls is PlainTextScanner:
-                    continue
-                ext = scanner_cls.extension
-                if ext in written_extensions:
-                    continue
-                written_extensions.add(ext)
-                fmt_path = output_path.with_suffix(ext)
-                fmt_path.write_text(scanner_cls.format_output(unique), encoding=encoding)
         except (OSError, PermissionError) as e:
             raise OutputError(f"Cannot write output to {output_path}: {e}") from e
 

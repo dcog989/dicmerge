@@ -309,35 +309,3 @@ def test_run_write_back_dry_run_reports_no_stats(tmp_path: Path):
 
     assert result["write_back_stats"] == {}
     assert ff_file.read_text(encoding="utf-8") == "foo\nbar\n"
-
-
-def test_run_writes_discovered_formats(tmp_path: Path):
-    config_path, src, out = _make_config(tmp_path)
-
-    firefox_dir = src / "firefox" / "default"
-    firefox_dir.mkdir(parents=True)
-    (firefox_dir / "persdict.dat").write_text("foo\nbar\n", encoding="utf-8")
-
-    cfg = yaml.safe_load(config_path.read_text(encoding="utf-8"))
-    cfg["sources"]["libreoffice"] = {
-        "enabled": True,
-        "paths": [str(src / "libreoffice/*.dic")],
-    }
-    config_path.write_text(yaml.dump(cfg), encoding="utf-8")
-
-    lo_dir = src / "libreoffice"
-    lo_dir.mkdir(parents=True)
-    (lo_dir / "custom.dic").write_text(
-        "OOoUserDict1\nlang: en-US\ntype: positive\nreplacement: \nbaz\n",
-        encoding="utf-8",
-    )
-
-    run(config_path=config_path)
-
-    assert (out / "combined.txt").read_text(encoding="utf-8") == "foo\nbar\nbaz\n"
-    assert (out / "combined.dat").exists()
-    assert (out / "combined.dat").read_text(encoding="utf-8") == "foo\nbar\nbaz\n"
-    assert (out / "combined.dic").exists()
-    assert (out / "combined.dic").read_text(encoding="utf-8") == (
-        "OOoUserDict1\nlang: en-US\ntype: positive\nreplacement: \nfoo\nbar\nbaz\n"
-    )
