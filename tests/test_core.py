@@ -3,7 +3,7 @@ from pathlib import Path
 import yaml
 
 from dicmerge.core import _apply_filters, run
-from dicmerge.exceptions import NoSourcesError
+from dicmerge.exceptions import NoSourcesError, WriteBackError
 
 
 def test_apply_filters_min_length():
@@ -305,3 +305,24 @@ def test_run_write_back_dry_run_reports_targets_without_writing(tmp_path: Path):
     assert result["write_back_stats"] == {"firefox": [("persdict.dat", 2)]}
     assert ff_file.read_text(encoding="utf-8") == "foo\nbar\n"
     assert not (firefox_dir / "persdict.dat.bak").exists()
+
+
+def test_run_write_back_backup_failure_raises_writeback_error(tmp_path: Path, monkeypatch):
+    import shutil
+
+    import pytest
+
+    config_path, src, _ = _make_config(tmp_path)
+
+    firefox_dir = src / "firefox" / "default"
+    firefox_dir.mkdir(parents=True)
+    ff_file = firefox_dir / "persdict.dat"
+    ff_file.write_text("foo\nbar\n", encoding="utf-8")
+
+    def _fail_copy2(src_path, dst_path):
+        raise OSError("backup failed")
+
+    monkeypatch.setattr(shutil, "copy2", _fail_copy2)
+
+    with pytest.raises(WriteBackError):
+        run(config_path=config_path, write_back=True)

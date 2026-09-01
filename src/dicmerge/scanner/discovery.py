@@ -4,13 +4,10 @@ from typing import Any
 
 from dicmerge.util import expand_paths
 
-_BACKUP_MARKERS = {"-backup", "-back-ovfs"}
-
 
 def _is_backup(path: Path) -> bool:
-    if any(part.endswith(m) for part in path.parts for m in _BACKUP_MARKERS):
-        return True
-    if any("backup" in part.casefold() for part in path.parts):
+    parent = path.parent.name.casefold()
+    if parent.endswith("-backup") or parent.endswith("-back-ovfs") or "backup" in parent:
         return True
     return path.suffix == ".bak"
 

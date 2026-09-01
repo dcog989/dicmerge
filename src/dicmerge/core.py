@@ -100,10 +100,10 @@ def _write_back(
             if _should_skip_rws(name, path):
                 continue
             if not dry_run:
-                if config["write_back"]["create_backup"]:
-                    backup = path.with_suffix(path.suffix + config["write_back"]["backup_suffix"])
-                    shutil.copy2(path, backup)
                 try:
+                    if config["write_back"]["create_backup"]:
+                        backup = path.with_suffix(path.suffix + config["write_back"]["backup_suffix"])
+                        shutil.copy2(path, backup)
                     scanner = get_scanner(path)
                     content = scanner.format_output(unique)
                     path.write_text(content, encoding=encoding)
