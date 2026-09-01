@@ -29,11 +29,12 @@ Versions are managed by cocogitto from conventional commits. `cog bump` updates
 ## Usage
 
 ```sh
-dicmerge                        # Merge and write combined wordlist
-dicmerge --dry-run              # Preview only
-dicmerge --write-back           # Overwrite each source with the merged wordlist
-dicmerge --list-sources         # Show discovered dictionary files
-dicmerge --config custom.yaml   # Use alternate config
+# from the project root
+uv run dicmerge                      # Merge and write combined wordlist
+uv run dicmerge --dry-run            # Preview only
+uv run dicmerge --write-back         # Overwrite each source with the merged wordlist
+uv run dicmerge --list-sources       # Show discovered dictionary files
+uv run dicmerge --config custom.yaml # Use alternate config
 ```
 
 On first run, `~/.config/dicmerge/config.yaml` is created automatically with default settings.
