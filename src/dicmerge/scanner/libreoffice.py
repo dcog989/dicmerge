@@ -1,26 +1,12 @@
-from pathlib import Path
-
 from dicmerge.scanner.base import Scanner
-from dicmerge.util import read_text_with_fallback
 
 _LO_HEADER = "OOoUserDict1\nlang: en-US\ntype: positive\nreplacement: \n"
 
 
 class LibreOfficeScanner(Scanner):
     extension = ".dic"
+    skip_header = len(_LO_HEADER.splitlines())
 
     @staticmethod
     def format_output(words: list[str]) -> str:
         return _LO_HEADER + "\n".join(words) + "\n"
-
-    def read(self, path: Path) -> list[str]:
-        lines = read_text_with_fallback(path).splitlines()
-        words: list[str] = []
-        for lineno, line in enumerate(lines, 1):
-            word = line.strip()
-            if not word:
-                continue
-            if lineno <= 4:
-                continue
-            words.append(word)
-        return words

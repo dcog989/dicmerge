@@ -1,12 +1,22 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
+from dicmerge.util import read_text_with_fallback
+
 
 class Scanner(ABC):
     extension: str = ""
+    skip_header: int = 0
 
-    @abstractmethod
-    def read(self, path: Path) -> list[str]: ...
+    def read(self, path: Path) -> list[str]:
+        words: list[str] = []
+        for lineno, line in enumerate(read_text_with_fallback(path).splitlines(), 1):
+            if lineno <= self.skip_header:
+                continue
+            word = line.strip()
+            if word:
+                words.append(word)
+        return words
 
     @staticmethod
     @abstractmethod
