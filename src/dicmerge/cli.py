@@ -86,7 +86,8 @@ def main() -> None:
         f"\nTotal unique words: [bold]{result['total_unique']}[/bold] "
         f"(from {result['total_raw']} raw, {result['total_filtered']} after filters)"
     )
-    console.print(f"Output: {result['output_path']}")
+    output_label = "Output would be written to" if args.dry_run else "Output"
+    console.print(f"{output_label}: {result['output_path']}")
 
     if result["write_back_stats"]:
         heading = "Write-back (dry run — no files written):" if args.dry_run else "Write-back:"
