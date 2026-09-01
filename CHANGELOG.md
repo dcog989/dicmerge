@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [v0.6.2](https://github.com/dcog989/dicmerge/compare/bcd6c25f548899076f77a8e2f8b1c02f2785a229..v0.6.2) - 2026-09-01
+#### Continuous Integration
+- pin setup-uv to v10.0.0 immutable tag - ([bcd6c25](https://github.com/dcog989/dicmerge/commit/bcd6c25f548899076f77a8e2f8b1c02f2785a229)) - dcog989
+
+- - -
+
 ## [v0.6.1](https://github.com/dcog989/dicmerge/compare/eaa744adca8843bf22c212f972a84186469ac41a..v0.6.1) - 2026-09-01
 #### Bug Fixes
 - push correct tag ref in cog post-bump hooks - ([eaa744a](https://github.com/dcog989/dicmerge/commit/eaa744adca8843bf22c212f972a84186469ac41a)) - dcog989
