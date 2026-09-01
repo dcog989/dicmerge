@@ -33,8 +33,7 @@ def run(
     for name, files in discovered.items():
         total = 0
         for path in files:
-            if path.suffix == ".rws":
-                get_logger().warning("%s: %s: skipping binary format (.rws)", name, path.name)
+            if _should_skip_rws(name, path):
                 continue
             scanner = get_scanner(path)
             used_scanner_types.add(type(scanner))
@@ -76,12 +75,7 @@ def run(
     if write_back and config["write_back"]["enabled"]:
         for name, files in discovered.items():
             for path in files:
-                if path.suffix == ".rws":
-                    get_logger().warning(
-                        "%s: %s: skipping write-back for binary format (.rws)",
-                        name,
-                        path.name,
-                    )
+                if _should_skip_rws(name, path):
                     continue
                 if not dry_run:
                     if config["write_back"]["create_backup"]:
@@ -103,6 +97,13 @@ def run(
         "write_back_stats": write_back_stats,
         "output_path": str(output_path),
     }
+
+
+def _should_skip_rws(name: str, path: Path) -> bool:
+    if path.suffix != ".rws":
+        return False
+    get_logger().warning("%s: %s: skipping binary format (.rws)", name, path.name)
+    return True
 
 
 def _apply_filters(words: list[str], filters: dict[str, Any]) -> list[str]:
