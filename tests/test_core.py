@@ -266,6 +266,22 @@ def test_run_write_back_respects_config_enabled(tmp_path: Path):
     assert ff_file.read_text(encoding="utf-8") == "foo\n"
 
 
+def test_run_write_back_refreshes_backup(tmp_path: Path):
+    config_path, src, _ = _make_config(tmp_path)
+
+    firefox_dir = src / "firefox" / "default"
+    firefox_dir.mkdir(parents=True)
+    ff_file = firefox_dir / "persdict.dat"
+    ff_file.write_text("foo\n", encoding="utf-8")
+
+    run(config_path=config_path, write_back=True)
+    assert (firefox_dir / "persdict.dat.bak").read_text(encoding="utf-8") == "foo\n"
+
+    ff_file.write_text("foo\nbar\n", encoding="utf-8")
+    run(config_path=config_path, write_back=True)
+    assert (firefox_dir / "persdict.dat.bak").read_text(encoding="utf-8") == "foo\nbar\n"
+
+
 def test_run_write_back_dry_run_reports_no_stats(tmp_path: Path):
     config_path, src, _ = _make_config(tmp_path)
 

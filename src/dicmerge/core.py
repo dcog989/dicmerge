@@ -85,8 +85,7 @@ def run(
                 if not dry_run:
                     if config["write_back"]["create_backup"]:
                         backup = path.with_suffix(path.suffix + config["write_back"]["backup_suffix"])
-                        if not backup.exists():
-                            shutil.copy2(path, backup)
+                        shutil.copy2(path, backup)
                     try:
                         scanner = get_scanner(path)
                         content = type(scanner).format_output(unique)
