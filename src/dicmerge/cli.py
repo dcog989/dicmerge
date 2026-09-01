@@ -89,10 +89,11 @@ def main() -> None:
     console.print(f"Output: {result['output_path']}")
 
     if result["write_back_stats"]:
-        console.print("\n[bold]Write-back:[/bold]")
+        heading = "Write-back (dry run — no files written):" if args.dry_run else "Write-back:"
+        console.print(f"\n[bold]{heading}[/bold]")
         for name, entries in sorted(result["write_back_stats"].items()):
             for filename, count in entries:
-                console.print(f"  [green]✓[/green] {name}: {filename} → +{count} words")
+                console.print(f"  [green]✓[/green] {name}: {filename} → {count} words")
 
     console.print("\n[green]Done.[/green]")
 

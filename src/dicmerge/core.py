@@ -109,7 +109,7 @@ def _write_back(
                     path.write_text(content, encoding=encoding)
                 except (OSError, PermissionError) as e:
                     raise WriteBackError(f"Cannot write back to {path}: {e}") from e
-                stats.setdefault(name, []).append((path.name, len(unique)))
+            stats.setdefault(name, []).append((path.name, len(unique)))
 
     return stats
 

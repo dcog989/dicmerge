@@ -292,7 +292,7 @@ def test_run_write_back_refreshes_backup(tmp_path: Path):
     assert (firefox_dir / "persdict.dat.bak").read_text(encoding="utf-8") == "foo\nbar\n"
 
 
-def test_run_write_back_dry_run_reports_no_stats(tmp_path: Path):
+def test_run_write_back_dry_run_reports_targets_without_writing(tmp_path: Path):
     config_path, src, _ = _make_config(tmp_path)
 
     firefox_dir = src / "firefox" / "default"
@@ -302,5 +302,6 @@ def test_run_write_back_dry_run_reports_no_stats(tmp_path: Path):
 
     result = run(config_path=config_path, write_back=True, dry_run=True)
 
-    assert result["write_back_stats"] == {}
+    assert result["write_back_stats"] == {"firefox": [("persdict.dat", 2)]}
     assert ff_file.read_text(encoding="utf-8") == "foo\nbar\n"
+    assert not (firefox_dir / "persdict.dat.bak").exists()
