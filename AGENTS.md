@@ -42,7 +42,7 @@ Linux CachyOS / KDE Plasma 6, Zed code editor, fish shell + Ghostty + Fresh edit
 - Scan enabled sources from config (Firefox, Obsidian, LibreOffice, KDE Sonnet, Thunderbird, Vim, Gedit)
 - Deduplicate case-insensitively (first occurrence wins)
 - Output plain text, one word per line, UTF-8
-- Write-back overwrites each source with the merged wordlist, creating a `.bak` backup first; gated by `write_back.enabled` in config (default true) in addition to `--write-back`
+- Write-back overwrites each source with the merged wordlist, creating a `.bak` backup first
 - Manual execution only, no daemon or scheduler
 
 ### Command Line

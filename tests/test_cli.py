@@ -21,7 +21,7 @@ def _write_config(tmp_path: Path) -> Path:
             "gedit": {"enabled": False, "paths": []},
         },
         "custom_sources": [],
-        "write_back": {"enabled": False, "create_backup": True, "backup_suffix": ".bak"},
+        "write_back": {"create_backup": True, "backup_suffix": ".bak"},
         "filters": {
             "min_length": 1,
             "max_length": 100,

@@ -40,7 +40,7 @@ def run(
         _write_output(output_path, unique, encoding)
 
     write_back_stats: dict[str, list[tuple[str, int]]] = {}
-    if write_back and config["write_back"]["enabled"]:
+    if write_back:
         write_back_stats = _write_back(discovered, unique, config, dry_run)
 
     return {

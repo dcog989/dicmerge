@@ -88,7 +88,6 @@ def _default_config() -> dict[str, Any]:
             {"name": "custom", "paths": ["~/my_words.txt"], "enabled": False},
         ],
         "write_back": {
-            "enabled": True,
             "create_backup": True,
             "backup_suffix": ".bak",
         },

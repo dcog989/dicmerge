@@ -77,7 +77,6 @@ def _make_config(tmp_path: Path) -> tuple[Path, Path, Path]:
         },
         "custom_sources": [],
         "write_back": {
-            "enabled": True,
             "create_backup": True,
             "backup_suffix": ".bak",
         },
@@ -263,7 +262,7 @@ def test_run_write_back_creates_backup(tmp_path: Path):
     assert (firefox_dir / "persdict.dat.bak").read_text(encoding="utf-8") == "foo\n"
 
 
-def test_run_write_back_respects_config_enabled(tmp_path: Path):
+def test_run_write_back_flag_wins_over_config(tmp_path: Path):
     config_path, src, _ = _make_config(tmp_path)
 
     firefox_dir = src / "firefox" / "default"
@@ -271,13 +270,9 @@ def test_run_write_back_respects_config_enabled(tmp_path: Path):
     ff_file = firefox_dir / "persdict.dat"
     ff_file.write_text("foo\n", encoding="utf-8")
 
-    cfg = yaml.safe_load(config_path.read_text(encoding="utf-8"))
-    cfg["write_back"]["enabled"] = False
-    config_path.write_text(yaml.dump(cfg), encoding="utf-8")
-
     result = run(config_path=config_path, write_back=True)
 
-    assert result["write_back_stats"] == {}
+    assert result["write_back_stats"] == {"firefox": [("persdict.dat", 1)]}
     assert ff_file.read_text(encoding="utf-8") == "foo\n"
 
 
