@@ -5,6 +5,7 @@ skip_ci = "[skip ci]"
 pre_bump_hooks = [
     "sed -i -E 's/^version = \"[^\"]*\"/version = \"{{version}}\"/' pyproject.toml",
     "sed -i -E 's/^__version__ = \"[^\"]*\"/__version__ = \"{{version}}\"/' src/dicmerge/__init__.py",
+    "uv lock",
 ]
 
 post_bump_hooks = [
