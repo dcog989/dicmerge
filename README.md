@@ -58,3 +58,5 @@ Default: `~/dicmerge-output/combined.txt` (configurable in config).
 ## Write-back
 
 `--write-back` overwrites each source dictionary with the merged wordlist. Original files are backed up with a `.bak` suffix before modification.
+
+Write-back also requires `write_back.enabled: true` in the config (the default); set it to `false` to disable write-back even when `--write-back` is passed.
