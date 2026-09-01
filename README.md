@@ -15,11 +15,15 @@ uv sync
 ```
 
 ```sh
-uv run version-bump                  # Bump minor version
-uv run version-bump 1.0.0            # Set specific version
-uv run version-bump major            # Bump major
-uv run version-bump patch            # Bump patch
+cog bump --auto             # Auto-detect bump from commit types (feat=minor, fix=patch)
+cog bump --minor            # Explicit minor bump
+cog bump --patch            # Explicit patch bump
+cog bump --version 1.0.0    # Set a specific version
+cog bump --dry-run --auto   # Preview the next version without tagging
 ```
+
+Versions are managed by cocogitto from conventional commits. `cog bump` updates
+`pyproject.toml` and `__init__.py`, appends to `CHANGELOG.md`, and tags the release.
 
 ## Usage
 

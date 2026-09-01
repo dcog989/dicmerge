@@ -11,3 +11,7 @@ pre-commit:
       run: uv run mypy src/
     pytest:
       run: uv run pytest
+commit-msg:
+  commands:
+    cog-verify:
+      run: cog verify --file "{1}"
