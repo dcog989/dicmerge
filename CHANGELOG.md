@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [v0.6.1](https://github.com/dcog989/dicmerge/compare/eaa744adca8843bf22c212f972a84186469ac41a..v0.6.1) - 2026-09-01
+#### Bug Fixes
+- push correct tag ref in cog post-bump hooks - ([eaa744a](https://github.com/dcog989/dicmerge/commit/eaa744adca8843bf22c212f972a84186469ac41a)) - dcog989
+#### Build system
+- regenerate uv.lock in cog pre-bump hooks - ([624eadb](https://github.com/dcog989/dicmerge/commit/624eadbc85b7597a3944f18106db798cb514f3ca)) - dcog989
+
+- - -
+
 ## [v0.6.0](https://github.com/dcog989/dicmerge/compare/c078cbce5fb91e3494273bfbfe9060313576650e..v0.6.0) - 2026-09-01
 #### Build system
 - push commits and tag after cog bump - ([c078cbc](https://github.com/dcog989/dicmerge/commit/c078cbce5fb91e3494273bfbfe9060313576650e)) - dcog989
