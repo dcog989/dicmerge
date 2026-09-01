@@ -142,27 +142,25 @@ def _is_backup(path: Path) -> bool:
     return path.suffix == ".bak"
 
 
+def _discover_paths(patterns: list[str], *, recursive: bool) -> list[Path]:
+    files: list[Path] = []
+    for pattern in expand_paths(patterns):
+        matches = glob.glob(str(pattern), recursive=recursive)
+        files.extend(p for p in (Path(m) for m in matches) if not _is_backup(p))
+    return sorted(set(files))
+
+
 def discover_source_files(config: dict[str, Any]) -> dict[str, list[Path]]:
     discovered: dict[str, list[Path]] = {}
 
     for name, source in config["sources"].items():
         if not source.get("enabled", True):
             continue
-        recursive = source.get("recursive", False)
-        files: list[Path] = []
-        for pattern in expand_paths(source["paths"]):
-            matches = glob.glob(str(pattern), recursive=recursive)
-            files.extend(sorted(Path(m) for m in matches if not _is_backup(Path(m))))
-        discovered[name] = sorted(set(files))
+        discovered[name] = _discover_paths(source["paths"], recursive=source.get("recursive", False))
 
-    custom = config.get("custom_sources", [])
-    for entry in custom:
+    for entry in config.get("custom_sources", []):
         if not entry.get("enabled", False):
             continue
-        custom_files: list[Path] = []
-        for pattern in expand_paths(entry["paths"]):
-            matches = glob.glob(str(pattern))
-            custom_files.extend(sorted(Path(m) for m in matches))
-        discovered[entry["name"]] = sorted(set(custom_files))
+        discovered[entry["name"]] = _discover_paths(entry["paths"], recursive=False)
 
     return discovered
