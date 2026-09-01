@@ -30,7 +30,7 @@ Versions are managed by cocogitto from conventional commits. `cog bump` updates
 ```sh
 dicmerge                        # Merge and write combined wordlist
 dicmerge --dry-run              # Preview only
-dicmerge --write-back           # Merge + append new words to each source
+dicmerge --write-back           # Overwrite each source with the merged wordlist
 dicmerge --list-sources         # Show discovered dictionary files
 dicmerge --config custom.yaml   # Use alternate config
 ```
@@ -41,7 +41,7 @@ On first run, `~/.config/dicmerge/config.yaml` is created automatically with def
 
 | Source         | Path(s) |
 |----------------|---------|
-| Firefox        | `~/.mozilla/firefox/*/persdict.dat`, `~/.config/mozilla/firefox/*/persdict.dat` |
+| Firefox        | `~/.mozilla/firefox/*/persdict.dat`, `~/.config/mozilla/firefox/*/persdict.dat`, `~/.var/app/org.mozilla.firefox/.mozilla/firefox/*/persdict.dat` |
 | Thunderbird    | `~/.thunderbird/*/persdict.dat` |
 | Obsidian       | `~/Documents/Obsidian/*/*.dic`, `~/.config/obsidian/Custom Dictionary.txt` |
 | LibreOffice    | `~/.config/libreoffice/4/user/wordbook/*.dic` |
@@ -57,4 +57,4 @@ Default: `~/dicmerge-output/combined.txt` (configurable in config).
 
 ## Write-back
 
-`--write-back` appends words missing from each source to its dictionary file. Original files are backed up with a `.bak` suffix before modification.
+`--write-back` overwrites each source dictionary with the merged wordlist. Original files are backed up with a `.bak` suffix before modification.
