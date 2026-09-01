@@ -72,7 +72,7 @@ def run(
 
     write_back_stats: dict[str, list[tuple[str, int]]] = {}
 
-    if write_back:
+    if write_back and config["write_back"]["enabled"]:
         for name, files in discovered.items():
             for path in files:
                 if path.suffix == ".rws":
@@ -84,9 +84,7 @@ def run(
                     continue
                 if not dry_run:
                     if config["write_back"]["create_backup"]:
-                        backup = path.with_suffix(
-                            path.suffix + config["write_back"]["backup_suffix"]
-                        )
+                        backup = path.with_suffix(path.suffix + config["write_back"]["backup_suffix"])
                         if not backup.exists():
                             shutil.copy2(path, backup)
                     try:
@@ -95,7 +93,7 @@ def run(
                         path.write_text(content, encoding="utf-8")
                     except (OSError, PermissionError) as e:
                         raise WriteBackError(f"Cannot write back to {path}: {e}") from e
-                write_back_stats.setdefault(name, []).append((path.name, len(unique)))
+                    write_back_stats.setdefault(name, []).append((path.name, len(unique)))
 
     return {
         "source_stats": stats,

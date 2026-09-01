@@ -77,7 +77,7 @@ def _make_config(tmp_path: Path) -> tuple[Path, Path, Path]:
         },
         "custom_sources": [],
         "write_back": {
-            "enabled": False,
+            "enabled": True,
             "create_backup": True,
             "backup_suffix": ".bak",
         },
@@ -108,7 +108,7 @@ def test_run_basic(tmp_path: Path):
 
 
 def test_run_merges_multiple_sources(tmp_path: Path):
-    config_path, src, out = _make_config(tmp_path)
+    config_path, src, _ = _make_config(tmp_path)
     (src / "firefox" / "default").mkdir(parents=True)
     (src / "firefox" / "default" / "persdict.dat").write_text("foo\nbar\n", encoding="utf-8")
 
@@ -132,7 +132,7 @@ def test_run_merges_multiple_sources(tmp_path: Path):
 
 
 def test_run_deduplicates(tmp_path: Path):
-    config_path, src, out = _make_config(tmp_path)
+    config_path, src, _ = _make_config(tmp_path)
     d = src / "firefox" / "default"
     d.mkdir(parents=True)
     (d / "persdict.dat").write_text("foo\nbar\nfoo\nBAR\n", encoding="utf-8")
@@ -172,7 +172,7 @@ def test_run_dry_run_does_not_write(tmp_path: Path):
 
 
 def test_run_no_sources_raises_error(tmp_path: Path):
-    config_path, src, out = _make_config(tmp_path)
+    config_path, src, _ = _make_config(tmp_path)
     cfg = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     cfg["sources"]["firefox"]["paths"] = [str(src / "nonexistent/*.dat")]
     config_path.write_text(yaml.dump(cfg), encoding="utf-8")
@@ -184,7 +184,7 @@ def test_run_no_sources_raises_error(tmp_path: Path):
 
 
 def test_run_write_back_overwrites_files(tmp_path: Path):
-    config_path, src, out = _make_config(tmp_path)
+    config_path, src, _ = _make_config(tmp_path)
 
     firefox_dir = src / "firefox" / "default"
     firefox_dir.mkdir(parents=True)
@@ -218,7 +218,7 @@ def test_run_write_back_overwrites_files(tmp_path: Path):
 
 
 def test_run_write_back_creates_backup(tmp_path: Path):
-    config_path, src, out = _make_config(tmp_path)
+    config_path, src, _ = _make_config(tmp_path)
 
     firefox_dir = src / "firefox" / "default"
     firefox_dir.mkdir(parents=True)
@@ -246,6 +246,38 @@ def test_run_write_back_creates_backup(tmp_path: Path):
     assert (firefox_dir / "persdict.dat.bak").exists()
     assert (lo_dir / "custom.dic.bak").exists()
     assert (firefox_dir / "persdict.dat.bak").read_text(encoding="utf-8") == "foo\n"
+
+
+def test_run_write_back_respects_config_enabled(tmp_path: Path):
+    config_path, src, _ = _make_config(tmp_path)
+
+    firefox_dir = src / "firefox" / "default"
+    firefox_dir.mkdir(parents=True)
+    ff_file = firefox_dir / "persdict.dat"
+    ff_file.write_text("foo\n", encoding="utf-8")
+
+    cfg = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    cfg["write_back"]["enabled"] = False
+    config_path.write_text(yaml.dump(cfg), encoding="utf-8")
+
+    result = run(config_path=config_path, write_back=True)
+
+    assert result["write_back_stats"] == {}
+    assert ff_file.read_text(encoding="utf-8") == "foo\n"
+
+
+def test_run_write_back_dry_run_reports_no_stats(tmp_path: Path):
+    config_path, src, _ = _make_config(tmp_path)
+
+    firefox_dir = src / "firefox" / "default"
+    firefox_dir.mkdir(parents=True)
+    ff_file = firefox_dir / "persdict.dat"
+    ff_file.write_text("foo\nbar\n", encoding="utf-8")
+
+    result = run(config_path=config_path, write_back=True, dry_run=True)
+
+    assert result["write_back_stats"] == {}
+    assert ff_file.read_text(encoding="utf-8") == "foo\nbar\n"
 
 
 def test_run_writes_discovered_formats(tmp_path: Path):
