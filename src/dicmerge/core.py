@@ -99,7 +99,7 @@ def _write_back(
                     shutil.copy2(path, backup)
                 try:
                     scanner = get_scanner(path)
-                    content = type(scanner).format_output(unique)
+                    content = scanner.format_output(unique)
                     path.write_text(content, encoding=encoding)
                 except (OSError, PermissionError) as e:
                     raise WriteBackError(f"Cannot write back to {path}: {e}") from e
