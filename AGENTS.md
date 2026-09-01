@@ -1,24 +1,24 @@
 # AGENTS.md
 
-## Project: dicmerge
+## Project Specifics
 
-Python script to scan, merge, and optionally write back custom user dictionaries from multiple Linux applications.
+dicmerge, a Python script to scan, merge, and optionally write back custom user dictionaries from multiple Linux KDE applications.
 
-## Dev Environment
+### Dev Environment
 
-Linux CachyOS / KDE Plasma 6 + Firefox, Zed code editor, fish shell with Ghostty + Fresh editor. yay and bun package managers.
+Linux CachyOS / KDE Plasma 6, Zed code editor, fish shell + Ghostty + Fresh editor. yay and bun package managers.
 
 ### Tech Stack
 
-| Tool | Version |
-|------|---------|
-| Python | 3.14 |
-| Package manager | uv |
-| Build backend | hatchling |
-| Linter + formatter | ruff |
-| Type checker | mypy |
-| Test framework | pytest |
-| Git hooks | lefthook |
+| Tool                | Version   |
+|---------------------|-----------|
+| Python              | 3.14      |
+| Package manager     | uv        |
+| Build backend       | hatchling |
+| Linter + formatter  | ruff      |
+| Type checker        | mypy      |
+| Test framework      | pytest    |
+| Git hooks           | lefthook  |
 
 ### Dependencies
 
@@ -28,12 +28,12 @@ Linux CachyOS / KDE Plasma 6 + Firefox, Zed code editor, fish shell with Ghostty
 
 ### Key Files
 
-| Path | Purpose |
-|------|---------|
-| `/usr/local/bin/dicmerge` | Main script |
-| `~/.config/dicmerge/config.yaml` | User configuration |
-| `~/dicmerge-output/combined.txt` | Merged output |
-| `~/.local/share/dicmerge/debug.log` | Debug log |
+| Path                                | Purpose            |
+|-------------------------------------|--------------------|
+| `/usr/local/bin/dicmerge`           | Main script        |
+| `~/.config/dicmerge/config.yaml`    | User configuration |
+| `~/dicmerge-output/combined.txt`    | Merged output      |
+| `~/.local/share/dicmerge/debug.log` | Debug log          |
 
 ### Core Behaviors
 
@@ -55,21 +55,6 @@ dicmerge --list-sources       # Show discovered paths
 ### Exit Codes
 
 0=Success, 1=Generic error, 2=Config error, 3=No sources, 4=Write-back failed, 5=Output unwritable
-
-### Development Priorities
-
-1. Core scanner + plain text handler
-2. Firefox, Obsidian, LibreOffice
-3. Obsidian, LibreOffice
-4. KDE Sonnet discovery
-5. Write-back with backup
-6. Custom source support
-
-### Constraints
-
-- No binary dictionary support (skip `.rws`)
-- No concurrency handling (manual execution only)
-- Linux only, CachyOS/Arch paths assumed
 
 ### File System Access
 
