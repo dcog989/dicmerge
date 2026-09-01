@@ -139,9 +139,7 @@ _BACKUP_MARKERS = {"-backup", "-back-ovfs"}
 def _is_backup(path: Path) -> bool:
     if any(part.endswith(m) for part in path.parts for m in _BACKUP_MARKERS):
         return True
-    if path.suffix == ".bak":
-        return True
-    return False
+    return path.suffix == ".bak"
 
 
 def discover_source_files(config: dict[str, Any]) -> dict[str, list[Path]]:

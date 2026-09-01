@@ -57,9 +57,8 @@ def main() -> None:
         console.print(f"Config path: {DEFAULT_CONFIG_PATH}")
         return
 
-    if args.config is not None:
-        if not args.config.exists():
-            raise ConfigError(f"Config file not found: {args.config}")
+    if args.config is not None and not args.config.exists():
+        raise ConfigError(f"Config file not found: {args.config}")
 
     if args.list_sources:
         from dicmerge.config import discover_source_files, load_config
