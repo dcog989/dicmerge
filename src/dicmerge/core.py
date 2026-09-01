@@ -24,6 +24,35 @@ def run(
     if total_sources == 0:
         raise NoSourcesError("No enabled source files found")
 
+    stats, all_words = _scan_sources(discovered)
+
+    filtered = _apply_filters(all_words, config["filters"])
+    unique = deduplicate(filtered)
+
+    if config["output"]["sort"]:
+        unique = sorted(unique, key=str.casefold)
+
+    output_path = Path(config["output"]["path"]).expanduser()
+    encoding = config["output"]["encoding"]
+
+    if not dry_run:
+        _write_output(output_path, unique, encoding)
+
+    write_back_stats: dict[str, list[tuple[str, int]]] = {}
+    if write_back and config["write_back"]["enabled"]:
+        write_back_stats = _write_back(discovered, unique, config, dry_run)
+
+    return {
+        "source_stats": stats,
+        "total_raw": len(all_words),
+        "total_filtered": len(filtered),
+        "total_unique": len(unique),
+        "write_back_stats": write_back_stats,
+        "output_path": str(output_path),
+    }
+
+
+def _scan_sources(discovered: dict[str, list[Path]]) -> tuple[dict[str, int], list[str]]:
     stats: dict[str, int] = {}
     all_words: list[str] = []
 
@@ -41,48 +70,42 @@ def run(
                 get_logger().warning("Failed to scan %s: %s", path, e)
         stats[name] = total
 
-    filtered = _apply_filters(all_words, config["filters"])
-    unique = deduplicate(filtered)
+    return stats, all_words
 
-    if config["output"]["sort"]:
-        unique = sorted(unique, key=str.casefold)
 
-    output_path = Path(config["output"]["path"]).expanduser()
+def _write_output(output_path: Path, unique: list[str], encoding: str) -> None:
+    try:
+        write_words(output_path, unique, encoding=encoding)
+    except (OSError, PermissionError) as e:
+        raise OutputError(f"Cannot write output to {output_path}: {e}") from e
+
+
+def _write_back(
+    discovered: dict[str, list[Path]],
+    unique: list[str],
+    config: dict[str, Any],
+    dry_run: bool,
+) -> dict[str, list[tuple[str, int]]]:
     encoding = config["output"]["encoding"]
+    stats: dict[str, list[tuple[str, int]]] = {}
 
-    if not dry_run:
-        try:
-            write_words(output_path, unique, encoding=encoding)
-        except (OSError, PermissionError) as e:
-            raise OutputError(f"Cannot write output to {output_path}: {e}") from e
+    for name, files in discovered.items():
+        for path in files:
+            if _should_skip_rws(name, path):
+                continue
+            if not dry_run:
+                if config["write_back"]["create_backup"]:
+                    backup = path.with_suffix(path.suffix + config["write_back"]["backup_suffix"])
+                    shutil.copy2(path, backup)
+                try:
+                    scanner = get_scanner(path)
+                    content = type(scanner).format_output(unique)
+                    path.write_text(content, encoding=encoding)
+                except (OSError, PermissionError) as e:
+                    raise WriteBackError(f"Cannot write back to {path}: {e}") from e
+                stats.setdefault(name, []).append((path.name, len(unique)))
 
-    write_back_stats: dict[str, list[tuple[str, int]]] = {}
-
-    if write_back and config["write_back"]["enabled"]:
-        for name, files in discovered.items():
-            for path in files:
-                if _should_skip_rws(name, path):
-                    continue
-                if not dry_run:
-                    if config["write_back"]["create_backup"]:
-                        backup = path.with_suffix(path.suffix + config["write_back"]["backup_suffix"])
-                        shutil.copy2(path, backup)
-                    try:
-                        scanner = get_scanner(path)
-                        content = type(scanner).format_output(unique)
-                        path.write_text(content, encoding=encoding)
-                    except (OSError, PermissionError) as e:
-                        raise WriteBackError(f"Cannot write back to {path}: {e}") from e
-                    write_back_stats.setdefault(name, []).append((path.name, len(unique)))
-
-    return {
-        "source_stats": stats,
-        "total_raw": len(all_words),
-        "total_filtered": len(filtered),
-        "total_unique": len(unique),
-        "write_back_stats": write_back_stats,
-        "output_path": str(output_path),
-    }
+    return stats
 
 
 def _should_skip_rws(name: str, path: Path) -> bool:
