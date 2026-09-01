@@ -7,6 +7,11 @@ pre_bump_hooks = [
     "sed -i -E 's/^__version__ = \"[^\"]*\"/__version__ = \"{{version}}\"/' src/dicmerge/__init__.py",
 ]
 
+post_bump_hooks = [
+    "git push",
+    "git push origin {{version}}",
+]
+
 [changelog]
 template = "remote"
 path = "CHANGELOG.md"
