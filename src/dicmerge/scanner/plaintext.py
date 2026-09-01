@@ -13,11 +13,8 @@ class PlainTextScanner(Scanner):
 
     def read(self, path: Path) -> list[str]:
         words: list[str] = []
-        for lineno, line in enumerate(read_text_with_fallback(path).splitlines(), 1):
+        for line in read_text_with_fallback(path).splitlines():
             word = line.strip()
-            if not word:
-                continue
-            if lineno == 1 and word.isdigit():
-                continue
-            words.append(word)
+            if word:
+                words.append(word)
         return words

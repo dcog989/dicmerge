@@ -26,11 +26,11 @@ def test_plaintext_read_skips_empty_lines(tmp_path: Path):
     assert scanner.read(f) == ["foo", "bar"]
 
 
-def test_plaintext_read_skips_first_line_if_digits(tmp_path: Path):
+def test_plaintext_read_keeps_digit_first_line(tmp_path: Path):
     f = tmp_path / "dict.txt"
     f.write_text("12345\nfoo\nbar\n", encoding="utf-8")
     scanner = PlainTextScanner()
-    assert scanner.read(f) == ["foo", "bar"]
+    assert scanner.read(f) == ["12345", "foo", "bar"]
 
 
 def test_plaintext_read_keeps_non_digit_first_line(tmp_path: Path):
