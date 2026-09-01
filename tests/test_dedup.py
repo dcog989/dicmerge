@@ -1,4 +1,4 @@
-from dicmerge.dedup import deduplicate, missing_words
+from dicmerge.dedup import deduplicate
 
 
 def test_deduplicate_removes_duplicates():
@@ -23,27 +23,3 @@ def test_deduplicate_empty():
 def test_deduplicate_no_duplicates():
     words = ["alpha", "beta", "gamma"]
     assert deduplicate(words) == ["alpha", "beta", "gamma"]
-
-
-def test_missing_words_returns_not_in_existing():
-    all_w = ["foo", "bar", "baz"]
-    existing = ["bar"]
-    assert missing_words(all_w, existing) == ["foo", "baz"]
-
-
-def test_missing_words_case_insensitive():
-    all_w = ["Foo", "Bar"]
-    existing = ["foo"]
-    assert missing_words(all_w, existing) == ["Bar"]
-
-
-def test_missing_words_all_present():
-    all_w = ["foo", "bar"]
-    existing = ["foo", "bar"]
-    assert missing_words(all_w, existing) == []
-
-
-def test_missing_words_empty_existing():
-    all_w = ["foo", "bar"]
-    existing: list[str] = []
-    assert missing_words(all_w, existing) == ["foo", "bar"]

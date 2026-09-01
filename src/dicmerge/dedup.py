@@ -7,8 +7,3 @@ def deduplicate(words: list[str]) -> list[str]:
             seen.add(key)
             result.append(word)
     return result
-
-
-def missing_words(all_words: list[str], existing: list[str]) -> list[str]:
-    existing_lower = {w.casefold() for w in existing}
-    return [w for w in all_words if w.casefold() not in existing_lower]
