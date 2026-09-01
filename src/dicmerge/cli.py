@@ -7,7 +7,7 @@ from rich.table import Table
 
 from dicmerge import __version__
 from dicmerge.config import DEFAULT_CONFIG_PATH
-from dicmerge.core import run
+from dicmerge.core import list_sources, run
 from dicmerge.exceptions import ConfigError, DicmergeError
 
 console = Console()
@@ -60,31 +60,12 @@ def main() -> None:
     if args.config is not None and not args.config.exists():
         raise ConfigError(f"Config file not found: {args.config}")
 
-    if args.list_sources:
-        from dicmerge.config import load_config
-        from dicmerge.scanner.discovery import discover_source_files
-
-        try:
-            config = load_config(args.config)
-        except DicmergeError as e:
-            console.print(f"[red]Error:[/red] {e}")
-            sys.exit(e.exit_code)
-        discovered = discover_source_files(config)
-        table = Table(title="Discovered Sources")
-        table.add_column("Source", style="cyan")
-        table.add_column("Files")
-        for name, files in sorted(discovered.items()):
-            if files:
-                table.add_row(name, "\n".join(str(f) for f in files))
-            else:
-                table.add_row(name, "[dim]none found[/dim]")
-        console.print(table)
-        return
-
-    if args.dry_run:
-        console.print("[yellow]Dry run mode — no files will be written[/yellow]")
-
     try:
+        if args.list_sources:
+            _print_sources(list_sources(args.config))
+            return
+        if args.dry_run:
+            console.print("[yellow]Dry run mode — no files will be written[/yellow]")
         result = run(
             config_path=args.config,
             write_back=args.write_back,
@@ -114,3 +95,15 @@ def main() -> None:
                 console.print(f"  [green]✓[/green] {name}: {filename} → +{count} words")
 
     console.print("\n[green]Done.[/green]")
+
+
+def _print_sources(discovered: dict[str, list[Path]]) -> None:
+    table = Table(title="Discovered Sources")
+    table.add_column("Source", style="cyan")
+    table.add_column("Files")
+    for name, files in sorted(discovered.items()):
+        if files:
+            table.add_row(name, "\n".join(str(f) for f in files))
+        else:
+            table.add_row(name, "[dim]none found[/dim]")
+    console.print(table)

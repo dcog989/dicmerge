@@ -53,6 +53,11 @@ def run(
     }
 
 
+def list_sources(config_path: Path | None = None) -> dict[str, list[Path]]:
+    config = load_config(config_path)
+    return discover_source_files(config)
+
+
 def _scan_sources(discovered: dict[str, list[Path]]) -> tuple[dict[str, int], list[str]]:
     stats: dict[str, int] = {}
     all_words: list[str] = []
