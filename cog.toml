@@ -11,6 +11,7 @@ pre_bump_hooks = [
 post_bump_hooks = [
     "git push",
     "git push origin v{{version}}",
+    "gh release create {{version_tag}} --notes \"$(cog changelog --at {{version_tag}})\"",
 ]
 
 [changelog]
