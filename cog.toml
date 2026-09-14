@@ -3,6 +3,10 @@ tag_prefix = "v"
 skip_ci = "[skip ci]"
 
 pre_bump_hooks = [
+    "uv run ruff check",
+    "uv run ruff format --check",
+    "uv run mypy src/",
+    "uv run pytest",
     "sed -i -E 's/^version = \"[^\"]*\"/version = \"{{version}}\"/' pyproject.toml",
     "sed -i -E 's/^__version__ = \"[^\"]*\"/__version__ = \"{{version}}\"/' src/dicmerge/__init__.py",
     "uv lock",
