@@ -48,10 +48,14 @@ def test_cli_prints_default_config_path(capsys: pytest.CaptureFixture[str], monk
     assert "Config path:" in capsys.readouterr().out
 
 
-def test_cli_missing_config_raises(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_cli_missing_config_exits_config_error(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
     monkeypatch.setattr(sys, "argv", ["dicmerge", "--config", str(tmp_path / "nope.yaml")])
-    with pytest.raises(ConfigError):
+    with pytest.raises(SystemExit) as exc:
         main()
+    assert exc.value.code == ConfigError.exit_code
+    assert "Config file not found" in capsys.readouterr().out
 
 
 def test_cli_list_sources(tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch) -> None:
