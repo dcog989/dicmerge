@@ -7,7 +7,7 @@ from dicmerge.config import load_config
 from dicmerge.dedup import deduplicate
 from dicmerge.exceptions import NoSourcesError, OutputError, WriteBackError
 from dicmerge.log import get_logger
-from dicmerge.output import write_words
+from dicmerge.output import write_text_atomic, write_words
 from dicmerge.scanner import get_scanner
 from dicmerge.scanner.discovery import discover_source_files
 
@@ -110,7 +110,7 @@ def _write_back(
                         shutil.copy2(path, backup)
                     scanner = get_scanner(path)
                     content = scanner.format_output(unique)
-                    path.write_text(content, encoding="utf-8")
+                    write_text_atomic(path, content)
                 except (OSError, PermissionError) as e:
                     raise WriteBackError(f"Cannot write back to {path}: {e}") from e
             stats.setdefault(name, []).append((path.name, len(unique)))

@@ -4,6 +4,10 @@ from tempfile import NamedTemporaryFile
 
 
 def write_words(path: Path, words: list[str]) -> None:
+    write_text_atomic(path, "".join(f"{word}\n" for word in words))
+
+
+def write_text_atomic(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp_path: Path | None = None
     try:
@@ -15,8 +19,7 @@ def write_words(path: Path, words: list[str]) -> None:
             delete=False,
         ) as tmp:
             tmp_path = Path(tmp.name)
-            for word in words:
-                tmp.write(f"{word}\n")
+            tmp.write(content)
             tmp.flush()
         if tmp_path is None:
             raise RuntimeError("temporary file was not created")
