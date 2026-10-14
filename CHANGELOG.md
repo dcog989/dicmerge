@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [v0.6.4](https://github.com/dcog989/dicmerge/compare/877a81f29e5684daff1eecbf2abd11d318ce2ce5..v0.6.4) - 2026-10-14
+#### Bug Fixes
+- (**discovery**) deduplicate identical dictionary files within a source - ([3cd1dc4](https://github.com/dcog989/dicmerge/commit/3cd1dc461853d94c53f3d2afffeb079174b5d416)) - dcog989
+#### Build system
+- (**deps**) bump astral-sh/setup-uv from 10.1.0 to 10.3.0 - ([877a81f](https://github.com/dcog989/dicmerge/commit/877a81f29e5684daff1eecbf2abd11d318ce2ce5)) - dependabot[bot]
+
+- - -
+
 ## [v0.6.3](https://github.com/dcog989/dicmerge/compare/3e9a2b26692d1eabb577abee1ca4365bfcf971f6..v0.6.3) - 2026-10-14
 #### Bug Fixes
 - (**cli**) handle missing config file as ConfigError - ([29378a5](https://github.com/dcog989/dicmerge/commit/29378a56949043676057a54843b4679232407a70)) - dcog989
