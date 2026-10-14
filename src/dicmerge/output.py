@@ -3,13 +3,13 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 
-def write_words(path: Path, words: list[str], encoding: str = "utf-8") -> None:
+def write_words(path: Path, words: list[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp_path: Path | None = None
     try:
         with NamedTemporaryFile(
             mode="w",
-            encoding=encoding,
+            encoding="utf-8",
             dir=path.parent,
             prefix=".dicmerge_",
             delete=False,

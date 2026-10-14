@@ -62,7 +62,6 @@ def _make_config(tmp_path: Path) -> tuple[Path, Path, Path]:
         "output": {
             "path": str(out / "combined.txt"),
             "sort": False,
-            "encoding": "utf-8",
         },
         "sources": {
             "firefox": {
@@ -105,21 +104,6 @@ def test_run_basic(tmp_path: Path):
     assert result["total_unique"] == 3
     assert (out / "combined.txt").exists()
     assert (out / "combined.txt").read_text(encoding="utf-8") == "foo\nbar\nbaz\n"
-
-
-def test_run_uses_output_encoding(tmp_path: Path):
-    config_path, src, out = _make_config(tmp_path)
-    d = src / "firefox" / "default"
-    d.mkdir(parents=True)
-    (d / "persdict.dat").write_text("caf\u00e9\n", encoding="utf-8")
-
-    cfg = yaml.safe_load(config_path.read_text(encoding="utf-8"))
-    cfg["output"]["encoding"] = "latin-1"
-    config_path.write_text(yaml.dump(cfg), encoding="utf-8")
-
-    run(config_path=config_path)
-
-    assert (out / "combined.txt").read_bytes() == b"caf\xe9\n"
 
 
 def test_run_merges_multiple_sources(tmp_path: Path):

@@ -34,10 +34,9 @@ def run(
         unique = sorted(unique, key=str.casefold)
 
     output_path = Path(config["output"]["path"]).expanduser()
-    encoding = config["output"]["encoding"]
 
     if not dry_run:
-        _write_output(output_path, unique, encoding)
+        _write_output(output_path, unique)
 
     write_back_stats: dict[str, list[tuple[str, int]]] = {}
     if write_back:
@@ -81,9 +80,9 @@ def _scan_sources(discovered: dict[str, list[Path]]) -> tuple[dict[str, int], li
     return stats, all_words, failed
 
 
-def _write_output(output_path: Path, unique: list[str], encoding: str) -> None:
+def _write_output(output_path: Path, unique: list[str]) -> None:
     try:
-        write_words(output_path, unique, encoding=encoding)
+        write_words(output_path, unique)
     except (OSError, PermissionError) as e:
         raise OutputError(f"Cannot write output to {output_path}: {e}") from e
 
@@ -95,7 +94,6 @@ def _write_back(
     dry_run: bool,
     failed: set[Path],
 ) -> dict[str, list[tuple[str, int]]]:
-    encoding = config["output"]["encoding"]
     stats: dict[str, list[tuple[str, int]]] = {}
 
     for name, files in discovered.items():
@@ -112,7 +110,7 @@ def _write_back(
                         shutil.copy2(path, backup)
                     scanner = get_scanner(path)
                     content = scanner.format_output(unique)
-                    path.write_text(content, encoding=encoding)
+                    path.write_text(content, encoding="utf-8")
                 except (OSError, PermissionError) as e:
                     raise WriteBackError(f"Cannot write back to {path}: {e}") from e
             stats.setdefault(name, []).append((path.name, len(unique)))

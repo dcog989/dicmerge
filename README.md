@@ -38,7 +38,7 @@ Custom sources can be added under `custom_sources` in the config file.
 ## Output
 
 Written to `~/dicmerge-output/combined.txt` (configurable under `output`): one word
-per line, deduplicated case-insensitively, sorted, UTF-8 by default.
+per line, deduplicated case-insensitively, sorted, UTF-8.
 
 ## Write-back
 

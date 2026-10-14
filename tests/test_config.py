@@ -30,7 +30,7 @@ def test_normalise_merges_partial_config():
     raw = {"output": {"sort": False}}
     cfg = _normalise(raw)
     assert cfg["output"]["sort"] is False
-    assert cfg["output"]["encoding"] == "utf-8"
+    assert cfg["output"]["path"] == "~/dicmerge-output/combined.txt"
 
 
 def test_normalise_overrides_sources():

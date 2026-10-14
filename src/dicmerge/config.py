@@ -40,7 +40,6 @@ def _default_config() -> dict[str, Any]:
     return {
         "output": {
             "path": "~/dicmerge-output/combined.txt",
-            "encoding": "utf-8",
             "sort": True,
         },
         "sources": {
