@@ -4,6 +4,7 @@ import yaml
 
 from dicmerge.core import _apply_filters, run
 from dicmerge.exceptions import NoSourcesError, WriteBackError
+from dicmerge.scanner.firefox import FirefoxScanner
 
 
 def test_apply_filters_min_length():
@@ -326,3 +327,23 @@ def test_run_write_back_backup_failure_raises_writeback_error(tmp_path: Path, mo
 
     with pytest.raises(WriteBackError):
         run(config_path=config_path, write_back=True)
+
+
+def test_run_write_back_skips_unreadable_source(tmp_path: Path, monkeypatch):
+    config_path, src, _ = _make_config(tmp_path)
+
+    firefox_dir = src / "firefox" / "default"
+    firefox_dir.mkdir(parents=True)
+    ff_file = firefox_dir / "persdict.dat"
+    ff_file.write_text("foo\n", encoding="utf-8")
+
+    def _fail_read(self, path):
+        raise OSError("cannot read")
+
+    monkeypatch.setattr(FirefoxScanner, "read", _fail_read)
+
+    result = run(config_path=config_path, write_back=True)
+
+    assert result["write_back_stats"] == {}
+    assert ff_file.read_text(encoding="utf-8") == "foo\n"
+    assert not (firefox_dir / "persdict.dat.bak").exists()

@@ -25,7 +25,7 @@ def run(
     if total_sources == 0:
         raise NoSourcesError("No enabled source files found")
 
-    stats, all_words = _scan_sources(discovered)
+    stats, all_words, failed = _scan_sources(discovered)
 
     filtered = _apply_filters(all_words, config["filters"])
     unique = deduplicate(filtered)
@@ -41,7 +41,7 @@ def run(
 
     write_back_stats: dict[str, list[tuple[str, int]]] = {}
     if write_back:
-        write_back_stats = _write_back(discovered, unique, config, dry_run)
+        write_back_stats = _write_back(discovered, unique, config, dry_run, failed)
 
     return {
         "source_stats": stats,
@@ -58,9 +58,10 @@ def list_sources(config_path: Path | None = None) -> dict[str, list[Path]]:
     return discover_source_files(config)
 
 
-def _scan_sources(discovered: dict[str, list[Path]]) -> tuple[dict[str, int], list[str]]:
+def _scan_sources(discovered: dict[str, list[Path]]) -> tuple[dict[str, int], list[str], set[Path]]:
     stats: dict[str, int] = {}
     all_words: list[str] = []
+    failed: set[Path] = set()
 
     for name, files in discovered.items():
         total = 0
@@ -73,10 +74,11 @@ def _scan_sources(discovered: dict[str, list[Path]]) -> tuple[dict[str, int], li
                 all_words.extend(words)
                 total += len(words)
             except Exception as e:
+                failed.add(path)
                 get_logger().warning("Failed to scan %s: %s", path, e)
         stats[name] = total
 
-    return stats, all_words
+    return stats, all_words, failed
 
 
 def _write_output(output_path: Path, unique: list[str], encoding: str) -> None:
@@ -91,6 +93,7 @@ def _write_back(
     unique: list[str],
     config: dict[str, Any],
     dry_run: bool,
+    failed: set[Path],
 ) -> dict[str, list[tuple[str, int]]]:
     encoding = config["output"]["encoding"]
     stats: dict[str, list[tuple[str, int]]] = {}
@@ -98,6 +101,9 @@ def _write_back(
     for name, files in discovered.items():
         for path in files:
             if _should_skip_rws(name, path):
+                continue
+            if path in failed:
+                get_logger().warning("%s: %s: skipping write-back, scan failed", name, path.name)
                 continue
             if not dry_run:
                 try:
