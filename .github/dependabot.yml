@@ -9,7 +9,6 @@ updates:
       runtime:
         patterns:
           - 'PyYAML'
-          - 'rich'
       test:
         patterns:
           - 'pytest'

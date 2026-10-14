@@ -2,15 +2,10 @@ import argparse
 import sys
 from pathlib import Path
 
-from rich.console import Console
-from rich.table import Table
-
 from dicmerge import __version__
 from dicmerge.config import DEFAULT_CONFIG_PATH
 from dicmerge.core import list_sources, run
 from dicmerge.exceptions import ConfigError, DicmergeError
-
-console = Console()
 
 _SHOW_CONFIG = object()
 
@@ -54,7 +49,7 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.config is _SHOW_CONFIG:
-        console.print(f"Config path: {DEFAULT_CONFIG_PATH}")
+        print(f"Config path: {DEFAULT_CONFIG_PATH}")
         return
 
     try:
@@ -65,47 +60,46 @@ def main() -> None:
             _print_sources(list_sources(args.config))
             return
         if args.dry_run:
-            console.print("[yellow]Dry run mode — no files will be written[/yellow]")
+            print("Dry run mode — no files will be written")
         result = run(
             config_path=args.config,
             write_back=args.write_back,
             dry_run=args.dry_run,
         )
     except DicmergeError as e:
-        console.print(f"[red]Error:[/red] {e}")
+        print(f"Error: {e}")
         sys.exit(e.exit_code)
 
-    console.print("\n[bold]Scanning:[/bold]")
+    print("\nScanning:")
     for name, count in sorted(result["source_stats"].items()):
         if count:
-            console.print(f"  [green]✓[/green] {name}: {count} words")
+            print(f"  ✓ {name}: {count} words")
         else:
-            console.print(f"  [yellow]⚠[/yellow] {name}: not found")
+            print(f"  ⚠ {name}: not found")
 
-    console.print(
-        f"\nTotal unique words: [bold]{result['total_unique']}[/bold] "
+    print(
+        f"\nTotal unique words: {result['total_unique']} "
         f"(from {result['total_raw']} raw, {result['total_filtered']} after filters)"
     )
     output_label = "Output would be written to" if args.dry_run else "Output"
-    console.print(f"{output_label}: {result['output_path']}")
+    print(f"{output_label}: {result['output_path']}")
 
     if result["write_back_stats"]:
         heading = "Write-back (dry run — no files written):" if args.dry_run else "Write-back:"
-        console.print(f"\n[bold]{heading}[/bold]")
+        print(f"\n{heading}")
         for name, entries in sorted(result["write_back_stats"].items()):
             for filename, count in entries:
-                console.print(f"  [green]✓[/green] {name}: {filename} → {count} words")
+                print(f"  ✓ {name}: {filename} → {count} words")
 
-    console.print("\n[green]Done.[/green]")
+    print("\nDone.")
 
 
 def _print_sources(discovered: dict[str, list[Path]]) -> None:
-    table = Table(title="Discovered Sources")
-    table.add_column("Source", style="cyan")
-    table.add_column("Files")
+    print("Discovered Sources")
     for name, files in sorted(discovered.items()):
         if files:
-            table.add_row(name, "\n".join(str(f) for f in files))
+            print(f"  {name}:")
+            for f in files:
+                print(f"    {f}")
         else:
-            table.add_row(name, "[dim]none found[/dim]")
-    console.print(table)
+            print(f"  {name}: none found")

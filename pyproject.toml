@@ -6,7 +6,6 @@ requires-python = ">=3.14"
 license = { text = "MIT" }
 dependencies = [
     "PyYAML>=6.0",
-    "rich>=15.0",
 ]
 
 [project.scripts]
