@@ -2,6 +2,43 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [v0.6.3](https://github.com/dcog989/dicmerge/compare/3e9a2b26692d1eabb577abee1ca4365bfcf971f6..v0.6.3) - 2026-10-14
+#### Bug Fixes
+- (**cli**) handle missing config file as ConfigError - ([29378a5](https://github.com/dcog989/dicmerge/commit/29378a56949043676057a54843b4679232407a70)) - dcog989
+- (**config**) report malformed or unreadable config as exit 2 - ([73280e7](https://github.com/dcog989/dicmerge/commit/73280e799332573bfc4953b3def19b52ed2e0a6a)) - dcog989
+- (**core**) always write utf-8 - ([f05480c](https://github.com/dcog989/dicmerge/commit/f05480c1f97954125f445fd5e983a31e820d468d)) - dcog989
+- (**core**) skip write-back for sources that failed to scan - ([3d51e39](https://github.com/dcog989/dicmerge/commit/3d51e39131e5ccef8f096aa1ea4bb844ac8fd363)) - dcog989
+- (**discovery**) match only real Firefox backup dir names in _is_backup - ([b043502](https://github.com/dcog989/dicmerge/commit/b0435022c04f0ccf73446ee32c3cc94131cb44ac)) - dcog989
+- (**discovery**) skip non-file glob matches - ([63e3848](https://github.com/dcog989/dicmerge/commit/63e38480e2b071a5d8f7d723527ad27cdc0f8d6a)) - dcog989
+- (**log**) rotate debug.log and fall back to stderr when unwritable - ([80e8063](https://github.com/dcog989/dicmerge/commit/80e806367ad0bd37fa313c0c8588ac1b2fb4d244)) - dcog989
+- (**output**) keep destination mode instead of leaving files 0600 - ([b05df92](https://github.com/dcog989/dicmerge/commit/b05df92ba9befc259e985b1065bbedb042f2d8f7)) - dcog989
+- (**util**) reject NUL-containing files instead of latin1-decoding them - ([cc98203](https://github.com/dcog989/dicmerge/commit/cc98203d95ff8f5ab7582729bbbed2d9fb2388d4)) - dcog989
+- guard dicmerge.__main__ against running at import time - ([ab8641c](https://github.com/dcog989/dicmerge/commit/ab8641cf0390d68d6e45225e9024832fd7b92e06)) - dcog989
+#### Performance Improvements
+- (**libreoffice**) read only the header line when matching .dic files - ([14a6af4](https://github.com/dcog989/dicmerge/commit/14a6af44ba4d15dcb90c767a9c95564325458a04)) - dcog989
+#### Documentation
+- readme refined - ([b5f5ac5](https://github.com/dcog989/dicmerge/commit/b5f5ac5cdf162b9901c5d408cee90044dab2ef1f)) - dcog989
+- readme refined - ([3714425](https://github.com/dcog989/dicmerge/commit/3714425b64d9e309b210c4fa18bc091698340b9f)) - dcog989
+- agents.md refined - ([1656a7b](https://github.com/dcog989/dicmerge/commit/1656a7b8ed29fe088e5c4eefe1e88046948cc672)) - dcog989
+#### Tests
+- cover rws skip, output failure, and latin1 fallback paths - ([89bc0dd](https://github.com/dcog989/dicmerge/commit/89bc0dd073fe07eba1080b3edbb8fef7d6f86beb)) - dcog989
+#### Build system
+- (**deps**) bump astral-sh/setup-uv from 10.0.0 to 10.1.0 - ([d69dbfd](https://github.com/dcog989/dicmerge/commit/d69dbfd4b32ff90fd5bcd5571978c82d42cde088)) - dependabot[bot]
+#### Continuous Integration
+- add dependabot configuration - ([e0a8273](https://github.com/dcog989/dicmerge/commit/e0a827320c97c6afa5f32cd5980b5a3405242d9c)) - dcog989
+#### Refactoring
+- (**cli**) drop rich for plain print output - ([b6472ed](https://github.com/dcog989/dicmerge/commit/b6472edd15a1b941e8dc6bfa1fb632c14a399b69)) - dcog989
+- (**output**) extract write_text_atomic and use it for write-back - ([b099465](https://github.com/dcog989/dicmerge/commit/b099465d861f16df95628e36c4a0a86a90af598c)) - dcog989
+#### Miscellaneous Chores
+- (**editorconfig**) generalize indentation rules for multi-language use - ([337ec82](https://github.com/dcog989/dicmerge/commit/337ec82b2ee19345b65770f9d348875f60bf5758)) - dcog989
+- (**release**) run full checks in pre-bump hooks - ([22895f8](https://github.com/dcog989/dicmerge/commit/22895f8841e86addf555daba2fdba363e1e460d7)) - dcog989
+- (**release**) publish cocogitto changelog as GitHub release body - ([3e9a2b2](https://github.com/dcog989/dicmerge/commit/3e9a2b26692d1eabb577abee1ca4365bfcf971f6)) - dcog989
+- drop dead helpers, unused scanner extension attrs, and empty test files - ([e4c93e2](https://github.com/dcog989/dicmerge/commit/e4c93e2a1287e66a92c837363b9478b986dc70cc)) - dcog989
+- updates - ([aea7a13](https://github.com/dcog989/dicmerge/commit/aea7a13f93f910f660ba5cd4a9bb809d1efa8e00)) - dcog989
+- updates - ([a3e2b95](https://github.com/dcog989/dicmerge/commit/a3e2b9573f96cb5b6a4c2ac5297825006ed48c45)) - dcog989
+
+- - -
+
 ## [v0.6.2](https://github.com/dcog989/dicmerge/compare/bcd6c25f548899076f77a8e2f8b1c02f2785a229..v0.6.2) - 2026-09-01
 #### Continuous Integration
 - pin setup-uv to v10.0.0 immutable tag - ([bcd6c25](https://github.com/dcog989/dicmerge/commit/bcd6c25f548899076f77a8e2f8b1c02f2785a229)) - dcog989
