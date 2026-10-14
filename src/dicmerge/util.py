@@ -3,14 +3,6 @@ from pathlib import Path
 from dicmerge.log import get_logger
 
 
-def expand_paths(patterns: list[str]) -> list[Path]:
-    result: list[Path] = []
-    for pattern in patterns:
-        expanded = Path(pattern).expanduser()
-        result.append(expanded)
-    return result
-
-
 def read_text_with_fallback(path: Path) -> str:
     try:
         raw = path.read_bytes()

@@ -6,7 +6,6 @@ _LO_HEADER = "OOoUserDict1\nlang: en-US\ntype: positive\nreplacement: \n"
 
 
 class LibreOfficeScanner(Scanner):
-    extension = ".dic"
     skip_header = len(_LO_HEADER.splitlines())
 
     @classmethod

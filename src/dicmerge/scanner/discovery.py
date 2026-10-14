@@ -2,8 +2,6 @@ import glob
 from pathlib import Path
 from typing import Any
 
-from dicmerge.util import expand_paths
-
 
 def _is_backup(path: Path) -> bool:
     parent = path.parent.name.casefold()
@@ -14,8 +12,8 @@ def _is_backup(path: Path) -> bool:
 
 def _discover_paths(patterns: list[str], *, recursive: bool) -> list[Path]:
     files: list[Path] = []
-    for pattern in expand_paths(patterns):
-        matches = glob.glob(str(pattern), recursive=recursive)
+    for pattern in patterns:
+        matches = glob.glob(str(Path(pattern).expanduser()), recursive=recursive)
         files.extend(p for p in (Path(m) for m in matches) if p.is_file() and not _is_backup(p))
     return sorted(set(files))
 

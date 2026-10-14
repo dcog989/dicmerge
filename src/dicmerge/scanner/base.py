@@ -5,7 +5,6 @@ from dicmerge.util import read_text_with_fallback
 
 
 class Scanner(ABC):
-    extension: str = ""
     skip_header: int = 0
 
     @classmethod

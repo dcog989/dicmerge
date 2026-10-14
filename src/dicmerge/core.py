@@ -83,7 +83,7 @@ def _scan_sources(discovered: dict[str, list[Path]]) -> tuple[dict[str, int], li
 def _write_output(output_path: Path, unique: list[str]) -> None:
     try:
         write_words(output_path, unique)
-    except (OSError, PermissionError) as e:
+    except OSError as e:
         raise OutputError(f"Cannot write output to {output_path}: {e}") from e
 
 
@@ -111,7 +111,7 @@ def _write_back(
                     scanner = get_scanner(path)
                     content = scanner.format_output(unique)
                     write_text_atomic(path, content)
-                except (OSError, PermissionError) as e:
+                except OSError as e:
                     raise WriteBackError(f"Cannot write back to {path}: {e}") from e
             stats.setdefault(name, []).append((path.name, len(unique)))
 
