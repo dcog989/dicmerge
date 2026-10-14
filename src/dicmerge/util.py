@@ -13,10 +13,14 @@ def expand_paths(patterns: list[str]) -> list[Path]:
 
 def read_text_with_fallback(path: Path) -> str:
     try:
-        return path.read_text(encoding="utf-8")
+        raw = path.read_bytes()
+    except OSError:
+        get_logger().error("Failed to read %s", path)
+        raise
+    if b"\x00" in raw:
+        raise ValueError(f"{path} is not plain text (contains NUL bytes)")
+    try:
+        return raw.decode("utf-8")
     except UnicodeDecodeError:
         get_logger().warning("Encoding fallback to latin1 for %s", path)
-        return path.read_text(encoding="latin1")
-    except Exception:
-        get_logger().error("Failed to read %s with utf-8 or latin1", path)
-        raise
+        return raw.decode("latin1")

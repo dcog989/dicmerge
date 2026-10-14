@@ -331,3 +331,16 @@ def test_run_write_back_skips_unreadable_source(tmp_path: Path, monkeypatch):
     assert result["write_back_stats"] == {}
     assert ff_file.read_text(encoding="utf-8") == "foo\n"
     assert not (firefox_dir / "persdict.dat.bak").exists()
+
+
+def test_run_skips_file_with_nul_bytes(tmp_path: Path):
+    config_path, src, out = _make_config(tmp_path)
+
+    d = src / "firefox" / "default"
+    d.mkdir(parents=True)
+    (d / "persdict.dat").write_bytes("foo\n".encode("utf-16-le"))
+
+    result = run(config_path=config_path)
+
+    assert result["source_stats"]["firefox"] == 0
+    assert (out / "combined.txt").read_text(encoding="utf-8") == ""

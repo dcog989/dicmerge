@@ -19,7 +19,7 @@ class LibreOfficeScanner(Scanner):
         try:
             first = read_text_with_fallback(path).splitlines()[0].strip()
             return first == "OOoUserDict1"
-        except IndexError, OSError:
+        except IndexError, OSError, ValueError:
             return False
 
     @staticmethod
