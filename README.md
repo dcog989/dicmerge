@@ -37,13 +37,11 @@ Custom sources can be added under `custom_sources` in the config file.
 
 ## Output
 
-Written to `~/dicmerge-output/combined.txt` (configurable under `output`): one word
-per line, deduplicated case-insensitively, sorted, UTF-8.
+Written to `~/dicmerge-output/combined.txt` (configurable under `output`): one word per line, deduplicated case-insensitively, sorted, UTF-8.
 
 ## Write-back
 
-`--write-back` overwrites each source dictionary with the merged wordlist. Each
-original file is backed up with a `.bak` suffix before it is modified.
+`--write-back` overwrites each source dictionary with the merged wordlist. Each original file is backed up with a `.bak` suffix before it is modified.
 
 ---
 
@@ -54,17 +52,15 @@ uv sync                  # Create/refresh the dev environment
 uv run dicmerge          # Run from source
 uv run ruff format .     # Format
 uv run pytest            # Test
+uv clean                 # clean build artifacts
 ```
 
 ## Releasing
 
-Versions are managed by Cocogitto from conventional commits. `cog bump` updates
-`pyproject.toml` and `__init__.py`, appends to `CHANGELOG.md`, and tags the release.
+Versions are managed by Cocogitto from conventional commits. `cog bump` updates `pyproject.toml` and `__init__.py`, appends to `CHANGELOG.md`, and tags the release.
 
 ```sh
 cog bump --auto             # Auto-detect from commit types (feat=minor, fix=patch)
-cog bump --minor            # Explicit minor bump
-cog bump --patch            # Explicit patch bump
 cog bump --version 1.0.0    # Set a specific version
 cog bump --dry-run --auto   # Preview the next version without tagging
 ```
