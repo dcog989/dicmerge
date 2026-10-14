@@ -105,3 +105,21 @@ def test_libreoffice_read_strips_whitespace(tmp_path: Path):
     f.write_text(HEADER + "  foo  \n\tbar\t\n", encoding="utf-8")
     scanner = LibreOfficeScanner()
     assert scanner.read(f) == ["foo", "bar"]
+
+
+def test_libreoffice_matches_header_line(tmp_path: Path):
+    f = tmp_path / "custom.dic"
+    f.write_text(HEADER + "foo\n", encoding="utf-8")
+    assert LibreOfficeScanner.matches(f) is True
+
+
+def test_libreoffice_does_not_match_plain_word_list(tmp_path: Path):
+    f = tmp_path / "words.dic"
+    f.write_text("foo\nbar\n", encoding="utf-8")
+    assert LibreOfficeScanner.matches(f) is False
+
+
+def test_libreoffice_does_not_match_undecodable_file(tmp_path: Path):
+    f = tmp_path / "custom.dic"
+    f.write_bytes("foo\n".encode("utf-16-le"))
+    assert LibreOfficeScanner.matches(f) is False
