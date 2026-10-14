@@ -5,58 +5,70 @@ Scan multiple applications for custom user dictionaries, merge them into a singl
 ## Install
 
 ```sh
-uv pip list --outdated                       # check outdated
-uv tree --outdated                           # check outdated in tree
-uv sync --upgrade                            # bump all deps
-uv lock --upgrade-package <name> && uv sync  # bump one package
-uv run ruff format .                         # auto-format
-
 uv tool install git+https://github.com/dcog989/dicmerge
-uv sync
 ```
-
-```sh
-cog bump --auto             # Auto-detect bump from commit types (feat=minor, fix=patch)
-cog bump --minor            # Explicit minor bump
-cog bump --patch            # Explicit patch bump
-cog bump --version 1.0.0    # Set a specific version
-cog bump --dry-run --auto   # Preview the next version without tagging
-```
-
-Versions are managed by cocogitto from conventional commits. `cog bump` updates
-`pyproject.toml` and `__init__.py`, appends to `CHANGELOG.md`, and tags the release.
 
 ## Usage
 
 ```sh
-# from the project root
-uv run dicmerge                      # Merge and write combined wordlist
-uv run dicmerge --dry-run            # Preview only
-uv run dicmerge --write-back         # Overwrite each source with the merged wordlist
-uv run dicmerge --list-sources       # Show discovered dictionary files
-uv run dicmerge --config custom.yaml # Use alternate config
+dicmerge                      # Merge and write ~/dicmerge-output/combined.txt
+dicmerge --dry-run            # Preview only, no files written
+dicmerge --write-back         # Overwrite each source with the merged wordlist
+dicmerge --list-sources       # Show discovered dictionary files
+dicmerge --version            # Show version
+dicmerge --config custom.yaml # Use an alternate config file
 ```
 
 On first run, `~/.config/dicmerge/config.yaml` is created automatically with default settings.
 
 ## Sources
 
-| Source         | Path(s) |
-|----------------|---------|
-| Firefox        | `~/.mozilla/firefox/*/persdict.dat`, `~/.config/mozilla/firefox/*/persdict.dat`, `~/.var/app/org.mozilla.firefox/.mozilla/firefox/*/persdict.dat` |
-| Thunderbird    | `~/.thunderbird/*/persdict.dat` |
-| Obsidian       | `~/Documents/Obsidian/*/*.dic`, `~/.config/obsidian/Custom Dictionary.txt` |
-| LibreOffice    | `~/.config/libreoffice/4/user/wordbook/*.dic` |
-| KDE Sonnet     | `~/.hunspell_*` |
-| Vim/Neovim     | `~/.vim/spell/*.add`, `~/.config/nvim/spell/*.add` |
-| Gedit          | `~/.local/share/gedit/spellcheck/words` |
+| Source      | Path(s) |
+|-------------|---------|
+| Firefox     | `~/.mozilla/firefox/*/persdict.dat`, `~/.config/mozilla/firefox/*/persdict.dat`, `~/.var/app/org.mozilla.firefox/.mozilla/firefox/*/persdict.dat` |
+| Thunderbird | `~/.thunderbird/*/persdict.dat` |
+| Obsidian    | `~/Documents/Obsidian/*/*.dic`, `~/.config/obsidian/Custom Dictionary.txt` |
+| LibreOffice | `~/.config/libreoffice/4/user/wordbook/*.dic` |
+| KDE Sonnet  | `~/.hunspell_<LANG>` (falls back to `~/.hunspell_*`) |
+| Vim/Neovim  | `~/.vim/spell/*.add`, `~/.config/nvim/spell/*.add` |
+| Gedit       | `~/.local/share/gedit/spellcheck/words` |
 
-Custom sources can be added in the config file under `custom_sources`.
+Custom sources can be added under `custom_sources` in the config file.
 
 ## Output
 
-Default: `~/dicmerge-output/combined.txt` (configurable in config).
+Written to `~/dicmerge-output/combined.txt` (configurable under `output`): one word
+per line, deduplicated case-insensitively, sorted, UTF-8 by default.
 
 ## Write-back
 
-`--write-back` overwrites each source dictionary with the merged wordlist. Original files are backed up with a `.bak` suffix before modification.
+`--write-back` overwrites each source dictionary with the merged wordlist. Each
+original file is backed up with a `.bak` suffix before it is modified.
+
+---
+
+## Development
+
+```sh
+uv sync                  # Create/refresh the dev environment
+uv run dicmerge          # Run from source
+uv run ruff format .     # Format
+uv run pytest            # Test
+```
+
+## Releasing
+
+Versions are managed by Cocogitto from conventional commits. `cog bump` updates
+`pyproject.toml` and `__init__.py`, appends to `CHANGELOG.md`, and tags the release.
+
+```sh
+cog bump --auto             # Auto-detect from commit types (feat=minor, fix=patch)
+cog bump --minor            # Explicit minor bump
+cog bump --patch            # Explicit patch bump
+cog bump --version 1.0.0    # Set a specific version
+cog bump --dry-run --auto   # Preview the next version without tagging
+```
+
+## License
+
+[MIT License](LICENSE).
