@@ -104,6 +104,16 @@ def test_discover_source_files_skips_crashrecovery_backup_paths(tmp_path: Path):
     assert len(result["firefox"]) == 1
 
 
+def test_discover_source_files_skips_directories(tmp_path: Path):
+    (tmp_path / "words.dic").mkdir()
+
+    cfg = _default_config()
+    cfg["sources"]["libreoffice"]["paths"] = [str(tmp_path / "*.dic")]
+
+    result = discover_source_files(cfg)
+    assert result["libreoffice"] == []
+
+
 def test_discover_source_files_custom_sources(tmp_path: Path):
     (tmp_path / "my_words.txt").write_text("foo\n", encoding="utf-8")
 

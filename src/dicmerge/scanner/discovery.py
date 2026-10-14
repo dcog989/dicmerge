@@ -16,7 +16,7 @@ def _discover_paths(patterns: list[str], *, recursive: bool) -> list[Path]:
     files: list[Path] = []
     for pattern in expand_paths(patterns):
         matches = glob.glob(str(pattern), recursive=recursive)
-        files.extend(p for p in (Path(m) for m in matches) if not _is_backup(p))
+        files.extend(p for p in (Path(m) for m in matches) if p.is_file() and not _is_backup(p))
     return sorted(set(files))
 
 
