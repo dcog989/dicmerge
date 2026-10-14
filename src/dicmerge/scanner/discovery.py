@@ -5,7 +5,7 @@ from typing import Any
 
 def _is_backup(path: Path) -> bool:
     parent = path.parent.name.casefold()
-    if parent.endswith("-backup") or parent.endswith("-back-ovfs") or "backup" in parent:
+    if parent.endswith("-backup") or "-backup-crashrecovery-" in parent:
         return True
     return path.suffix == ".bak"
 

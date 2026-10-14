@@ -104,6 +104,17 @@ def test_discover_source_files_skips_crashrecovery_backup_paths(tmp_path: Path):
     assert len(result["firefox"]) == 1
 
 
+def test_discover_source_files_keeps_dirs_merely_named_backup(tmp_path: Path):
+    (tmp_path / "backup-notes").mkdir()
+    (tmp_path / "backup-notes" / "persdict.dat").write_text("foo\n", encoding="utf-8")
+
+    cfg = _default_config()
+    cfg["sources"]["firefox"]["paths"] = [str(tmp_path / "backup-notes" / "persdict.dat")]
+
+    result = discover_source_files(cfg)
+    assert [p.name for p in result["firefox"]] == ["persdict.dat"]
+
+
 def test_discover_source_files_skips_directories(tmp_path: Path):
     (tmp_path / "words.dic").mkdir()
 
