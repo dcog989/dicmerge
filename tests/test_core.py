@@ -2,9 +2,31 @@ from pathlib import Path
 
 import yaml
 
-from dicmerge.core import _apply_filters, run
-from dicmerge.exceptions import NoSourcesError, WriteBackError
+from dicmerge.core import _apply_filters, _should_skip_rws, run
+from dicmerge.exceptions import NoSourcesError, OutputError, WriteBackError
 from dicmerge.scanner.firefox import FirefoxScanner
+
+
+def test_should_skip_rws(tmp_path: Path):
+    assert _should_skip_rws("kde_sonnet", tmp_path / "foo.rws") is True
+    assert _should_skip_rws("kde_sonnet", tmp_path / "foo.txt") is False
+
+
+def test_run_output_failure_raises_output_error(tmp_path: Path, monkeypatch):
+    import pytest
+
+    config_path, src, _ = _make_config(tmp_path)
+    d = src / "firefox" / "default"
+    d.mkdir(parents=True)
+    (d / "persdict.dat").write_text("foo\n", encoding="utf-8")
+
+    def _fail_write(path, words):
+        raise OSError("disk full")
+
+    monkeypatch.setattr("dicmerge.core.write_words", _fail_write)
+
+    with pytest.raises(OutputError):
+        run(config_path=config_path)
 
 
 def test_apply_filters_min_length():

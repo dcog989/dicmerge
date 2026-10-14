@@ -40,6 +40,13 @@ def test_plaintext_read_keeps_non_digit_first_line(tmp_path: Path):
     assert scanner.read(f) == ["foo", "bar", "baz"]
 
 
+def test_plaintext_read_latin1_fallback(tmp_path: Path):
+    f = tmp_path / "dict.txt"
+    f.write_bytes("café\n".encode("latin1"))
+    scanner = PlainTextScanner()
+    assert scanner.read(f) == ["café"]
+
+
 def test_firefox_read(tmp_path: Path):
     f = tmp_path / "persdict.dat"
     f.write_text("foo\nbar\nbaz\n", encoding="utf-8")
