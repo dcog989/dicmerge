@@ -138,6 +138,32 @@ def test_discover_source_files_custom_sources(tmp_path: Path):
     assert len(result["custom"]) == 1
 
 
+def test_discover_source_files_skips_identical_files_within_source(tmp_path: Path):
+    for profile in ("05thsp3s.default", "05thsp3s.default-back-ovfs"):
+        (tmp_path / profile).mkdir()
+        (tmp_path / profile / "persdict.dat").write_text("foo\nbar\n", encoding="utf-8")
+
+    cfg = _default_config()
+    cfg["sources"]["firefox"]["paths"] = [str(tmp_path / "*/persdict.dat")]
+
+    result = discover_source_files(cfg)
+    assert len(result["firefox"]) == 1
+
+
+def test_discover_source_files_keeps_identical_files_across_sources(tmp_path: Path):
+    (tmp_path / "firefox").mkdir()
+    (tmp_path / "firefox" / "persdict.dat").write_text("foo\nbar\n", encoding="utf-8")
+    (tmp_path / "hunspell_en_GB").write_text("foo\nbar\n", encoding="utf-8")
+
+    cfg = _default_config()
+    cfg["sources"]["firefox"]["paths"] = [str(tmp_path / "firefox" / "persdict.dat")]
+    cfg["sources"]["kde_sonnet"]["paths"] = [str(tmp_path / "hunspell_en_GB")]
+
+    result = discover_source_files(cfg)
+    assert len(result["firefox"]) == 1
+    assert len(result["kde_sonnet"]) == 1
+
+
 def test_discover_source_files_respects_recursive(tmp_path: Path):
     (tmp_path / "a" / "b" / "words.dic").parent.mkdir(parents=True)
     (tmp_path / "a" / "b" / "words.dic").write_text("foo\n", encoding="utf-8")
