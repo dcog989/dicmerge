@@ -58,7 +58,7 @@ def main() -> None:
         return
 
     try:
-        if args.config is not None and not args.config.exists():
+        if args.config is not None and not args.config.is_file():
             raise ConfigError(f"Config file not found: {args.config}")
 
         if args.list_sources:

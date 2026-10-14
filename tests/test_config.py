@@ -1,6 +1,9 @@
 from pathlib import Path
 
+import pytest
+
 from dicmerge.config import _default_config, _normalise, load_config
+from dicmerge.exceptions import ConfigError
 from dicmerge.scanner.discovery import discover_source_files
 
 
@@ -24,6 +27,18 @@ def test_load_config_writes_defaults_when_missing(tmp_path: Path):
     cfg = load_config(config_path)
     assert cfg["output"]["path"] == "~/dicmerge-output/combined.txt"
     assert config_path.exists()
+
+
+def test_load_config_invalid_sources_type_raises_config_error(tmp_path: Path):
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text("sources: [firefox]\n", encoding="utf-8")
+    with pytest.raises(ConfigError):
+        load_config(config_path)
+
+
+def test_load_config_directory_raises_config_error(tmp_path: Path):
+    with pytest.raises(ConfigError):
+        load_config(tmp_path)
 
 
 def test_normalise_merges_partial_config():

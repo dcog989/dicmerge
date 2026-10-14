@@ -58,6 +58,16 @@ def test_cli_missing_config_exits_config_error(
     assert "Config file not found" in capsys.readouterr().out
 
 
+def test_cli_config_directory_exits_config_error(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(sys, "argv", ["dicmerge", "--config", str(tmp_path)])
+    with pytest.raises(SystemExit) as exc:
+        main()
+    assert exc.value.code == ConfigError.exit_code
+    assert "Config file not found" in capsys.readouterr().out
+
+
 def test_cli_list_sources(tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch) -> None:
     config = _write_config(tmp_path)
     src = tmp_path / "src" / "default"

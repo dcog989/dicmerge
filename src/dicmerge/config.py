@@ -12,21 +12,23 @@ DEFAULT_CONFIG_PATH = Path("~/.config/dicmerge/config.yaml").expanduser()
 def load_config(path: Path | None = None) -> dict[str, Any]:
     config_path = path or DEFAULT_CONFIG_PATH
 
-    if not config_path.exists():
-        default = _default_config()
-        _write_config(config_path, default)
-        return default
-
     try:
+        if not config_path.exists():
+            default = _default_config()
+            _write_config(config_path, default)
+            return default
         raw = yaml.safe_load(config_path.read_text(encoding="utf-8"))
-    except yaml.YAMLError as e:
-        raise ConfigError(f"Failed to parse config: {e}") from e
+    except (yaml.YAMLError, OSError, ValueError) as e:
+        raise ConfigError(f"Failed to load config {config_path}: {e}") from e
 
     if not isinstance(raw, dict):
         msg = f"Config must be a mapping, got {type(raw).__name__}"
         raise ConfigError(msg)
 
-    return _normalise(raw)
+    try:
+        return _normalise(raw)
+    except (TypeError, AttributeError, ValueError) as e:
+        raise ConfigError(f"Invalid config {config_path}: {e}") from e
 
 
 def _kde_sonnet_paths() -> list[str]:
