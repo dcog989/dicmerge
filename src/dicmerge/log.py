@@ -1,18 +1,29 @@
 import logging
+import logging.handlers
 from pathlib import Path
 
 LOG_DIR = Path("~/.local/share/dicmerge").expanduser()
+MAX_BYTES = 1_000_000
+BACKUP_COUNT = 1
 
 
 def _setup_logger() -> logging.Logger:
-    LOG_DIR.mkdir(parents=True, exist_ok=True)
     logger = logging.getLogger("dicmerge")
     logger.setLevel(logging.DEBUG)
-    path = LOG_DIR / "debug.log"
-    fh = logging.FileHandler(str(path), encoding="utf-8")
-    fh.setLevel(logging.DEBUG)
-    fh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
-    logger.addHandler(fh)
+    handler: logging.Handler
+    try:
+        LOG_DIR.mkdir(parents=True, exist_ok=True)
+        handler = logging.handlers.RotatingFileHandler(
+            str(LOG_DIR / "debug.log"),
+            maxBytes=MAX_BYTES,
+            backupCount=BACKUP_COUNT,
+            encoding="utf-8",
+        )
+    except OSError:
+        handler = logging.StreamHandler()
+    handler.setLevel(logging.DEBUG)
+    handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
+    logger.addHandler(handler)
     return logger
 
 
